@@ -68,6 +68,19 @@ class Sorter {
     }
 
     /**
+     * Swaps the values 
+     * 
+     * @param {Array<number>} elements Array
+     * @param {number} pos First position
+     * @param {number} value
+     */
+    setValue(elements, pos, value) {
+        elements[pos] = value;
+
+        this.notifyAll(new SortEvent(EventType.SET, elements, pos));
+    }
+
+    /**
      * Runs the sorting processing.
      * 
      * @param {Array<number>} elements Numbers to be sorted
@@ -148,21 +161,20 @@ class InsertionSorter extends Sorter {
      * 
      * @param {Array<number>} elements 
      */
-    process(elements) {
-        var i, len = elements.length,
+    process(elemens) {
+        var i, len = elemens.length,
             el, j;
 
         for (i = 1; i < len; i++) {
-            el = elements[i];
+            el = elemens[i];
             j = i;
 
-            while (j > 0 && elements[j - 1].value > el.value) {
-                this.notifyAll(new SortEvent(EventType.COMPARSION, elements, j - 1));
-                this.swap(elements, j, j - 1);
+            while (j > 0 && elemens[j - 1] > el) {
+                this.setValue(elemens, j, elemens[j - 1]);
                 j--;
             }
 
-            elements[j] = el;
+            this.setValue(elemens, j, el);
         }
     }
 }

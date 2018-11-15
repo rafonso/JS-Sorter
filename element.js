@@ -10,6 +10,8 @@ const EventType = {
     COMPARSION: "comparsion",
     /** Dois valores foram trocados. */
     SWAP: "swap",
+    /** Foi atribuido um valor, não originado de troca de valores */
+    SET: "set",
     /** A ordenação foi finalizada. */
     ENDED: "ended"
 }

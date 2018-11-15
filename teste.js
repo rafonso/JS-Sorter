@@ -228,6 +228,7 @@ class Counter {
                 this.comparsions++;
                 break;
             case EventType.SWAP:
+            case EventType.SET:
                 this.swaps++;
                 break;
         }
@@ -280,6 +281,7 @@ class Sounder {
                 }
                 break;
             case EventType.COMPARSION:
+            case EventType.SET:
             case EventType.SWAP:
                 event.positions.forEach(pos =>
                     this.oscillator.frequency.value = (event.elements[pos] / this.maxValue) * this.soundFactor
