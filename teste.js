@@ -10,7 +10,22 @@ function shuffleArray(array) {
     }
 }
 
-linear = {
+/**
+ * 
+ * @param {number} quantidade 
+ * @returns {Array<number>}
+ */
+function gerarNumeros(quantidade) {
+    let valores = [];
+    for (var i = 0; i < MAX; i++) {
+        valores.push(i);
+    }
+    shuffleArray(valores);
+
+    return valores;
+}
+
+let linear = {
     r: (x) => {
         if (x < 0.2)
             return 0.29 - 1.45 * x;
@@ -49,73 +64,63 @@ function toRgb(x, normalizador = (x) => x) {
 
 $(document).ready(
     function () {
+        let areaNumeros = null;
         let valores = [];
         let cores = [];
-        let elementos = [];
-        let campoNumeros = $("#numeros");
+        // let campoNumeros = $("#numeros");
 
         $("#btnGerarNumeros").click(function () {
-            valores = [];
+            valores = gerarNumeros(MAX);
             cores = [];
-            let width = 100 / MAX;
+            valores.forEach((i) => {
+                cores[i] = toRgb(i, i => i / MAX)
+            });
 
-            campoNumeros.empty();
-            for (var i = 0; i < MAX; i++) {
-                valores.push(i);
-                cores[i] = toRgb(i, x => x / MAX);
-            }
-            shuffleArray(valores);
+            areaNumeros = new AreaNumeros(new SortEvent(SortEvent.IDLE, valores), cores);
+        });
 
-            let loadEvent = new SortEvent(EventType.IDLE, valores);
-            carregarCampoNumeros(loadEvent, cores);
-
-
-/*
-            elementos =
-                valores.map(i =>
-                    $(`<div>&nbsp;</div>`)
-                    .prop("title", i)
-                    .css("width", `${width}%`)
-                    .css("background-color", cores[i])
-                );
-
-
-            // console.log(valores);
-            campoNumeros.html(elementos);
-*/
-});
         $("#btnOrdenar").click(function () {
             let worker = new Worker('testeWorker.js');
-            let p = new Pauser();
-            worker.addEventListener("message", (e) => {
-                console.log(e.data);
-                p.notify(e);
-                carregarCampoNumeros(e.data, cores);
-            });
+
+            let contador = new Counter();
+            let listeners = [
+                areaNumeros,
+                new ComponentsController(),
+                contador,
+//                new EventLogger()
+            ];
+
+            worker.addEventListener("message", (e) => listeners.forEach(l => l.notify(e.data)));
 
             worker.postMessage(valores);
 
-            return;
-
-
-
-            let sorter = new InsertionSorter();
-            let pauser = new Pauser(1);
-            let counter = new Counter();
-
-            //            sorter.subscribe(event => console.log(event.type, event.position1, event.position2, event.elements.map(el => el.value)));
-            sorter.subscribe(event => campoNumeros.html("").html(event.elements.map(el => el.representation)));
-            //            sorter.subscribe(event => pauser.notify(event));
-            sorter.subscribe(event => counter.notify(event));
-
-            sorter.run(valores);
-
-            console.log(`Comparações: ${counter.comparsions}, Trocas: ${counter.swaps}, Tempo: ${counter.totalTime} ms`);
+            // console.log(`Comparações: ${counter.comparsions}, Trocas: ${counter.swaps}, Tempo: ${counter.totalTime} ms`);
         });
     }
 );
 
+class ComponentsController {
 
+    constructor() {
+        this.btnGerarNumeros = $("#btnGerarNumeros");
+        this.btnOrdenar = $("#btnOrdenar");
+    }
+
+    /**
+     * 
+     * @param {EventType} event 
+     */
+    notify(event) {
+        if (event.type === EventType.START) {
+            this.btnGerarNumeros.attr("disabled", "disabled");
+            this.btnOrdenar.attr("disabled", "disabled");
+        } else if (event.type === EventType.ENDED) {
+            this.btnGerarNumeros.attr("disabled", null);
+            this.btnOrdenar.attr("disabled", null);
+        }
+    }
+
+}
 
 
 class Pauser {
@@ -157,6 +162,44 @@ function carregarCampoNumeros(event, cores) {
     campoNumeros.html(elementos);
 }
 
+class AreaNumeros {
+
+    /**
+     * 
+     * @param {SortEvent} eventoInicial
+     * @param {Array<string>} cores 
+     */
+    constructor(eventoInicial, cores) {
+        this.campoNumeros = $("#numeros");
+        this.cores = cores;
+
+        this.fillArea(eventoInicial);
+    }
+
+    /**
+     * 
+     * @param {SortEvent} evento 
+     */
+    fillArea(evento) {
+        let width = 100.0 / evento.elements.length;
+        let elementos =
+            evento.elements.map(i =>
+                $(`<div>&nbsp;</div>`)
+                .prop("title", i)
+                .css("width", `${width}%`)
+                .css("background-color", this.cores[i])
+                .prop("class", evento.positions.includes(i)? evento.type: "")
+            );
+
+        this.campoNumeros.html(elementos);
+    }
+
+    notify(event) {
+        this.fillArea(event);
+    }
+
+}
+
 class Counter {
 
     constructor() {
@@ -173,6 +216,8 @@ class Counter {
                 break;
             case EventType.ENDED:
                 this.totalTime = (new Date()).getTime() - this.startDate.getTime();
+
+                console.log(`Comparações: ${this.comparsions}, Trocas: ${this.swaps}, Tempo: ${this.totalTime} ms`);
                 break;
             case EventType.COMPARSION:
                 this.comparsions++;
@@ -183,4 +228,12 @@ class Counter {
         }
 
     }
+}
+
+class EventLogger {
+
+    notify(event) {
+        console.log(event);
+    }
+
 }

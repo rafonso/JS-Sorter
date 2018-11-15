@@ -37,14 +37,13 @@ class Sorter {
             }
         }
 
-
         this._observers.forEach(listener => listener(event));
     }
 
     /**
      * 
      * 
-     * @param {Array<Element>} elements 
+     * @param {Array<number>} elements 
      * @param {number} pos1 
      * @param {number} pos2 
      * @returns true
@@ -58,7 +57,7 @@ class Sorter {
     /**
      * Swaps the values 
      * 
-     * @param {Array<Element>} elements Array
+     * @param {Array<number>} elements Array
      * @param {number} pos1 First position
      * @param {number} pos2 Second Position
      */
@@ -71,7 +70,7 @@ class Sorter {
     /**
      * Runs the sorting processing.
      * 
-     * @param {Array<Element>} elements Elements to be sorted
+     * @param {Array<number>} elements Numbers to be sorted
      */
     run(elements) {
         if (this._started) {
@@ -91,7 +90,6 @@ class Sorter {
 /*
  * https://khan4019.github.io/front-end-Interview-Questions/sort.html
  */
-
 class BubbleSorter extends Sorter {
 
     constructor() {
@@ -100,7 +98,7 @@ class BubbleSorter extends Sorter {
 
     /**
      * 
-     * @param {Array<Element>} elements 
+     * @param {Array<number>} elements 
      */
     process(elements) {
         var len = elements.length;
@@ -123,7 +121,7 @@ class SelectionSorter extends Sorter {
 
     /**
      * 
-     * @param {Array<Element>} elements 
+     * @param {Array<number>} elements 
      */
     process(elements) {
         let minIdx,
@@ -148,7 +146,7 @@ class InsertionSorter extends Sorter {
 
     /**
      * 
-     * @param {Array<Element>} elements 
+     * @param {Array<number>} elements 
      */
     process(elements) {
         var i, len = elements.length,

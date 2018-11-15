@@ -1,15 +1,5 @@
 "use strict";
 
-const WorkerMessage = {
-    START: "start",
-    STOP: "stop",
-    GENERATE: "generate"
-
-}
-
-
-
-
 /**
  * See
  * http://stackoverflow.com/questions/14500091/uncaught-referenceerror-importscripts-is-not-defined
@@ -22,10 +12,8 @@ if ('function' === typeof importScripts) {
 	addEventListener('message', (e) => {
 		console.log(e.data);
 
-		let sorter = new SelectionSorter();
+		let sorter = new BubbleSorter();
 		sorter.subscribe(event => postMessage(event));
 		sorter.run(e.data);
-
 	});
-
 }
