@@ -12,7 +12,7 @@ if ('function' === typeof importScripts) {
 	addEventListener('message', (e) => {
 		console.log(e.data);
 
-		let sorter = new BubbleSorter();
+		let sorter = new SelectionSorter();
 		sorter.subscribe(event => postMessage(event));
 		sorter.run(e.data);
 	});

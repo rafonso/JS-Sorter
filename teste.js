@@ -87,7 +87,8 @@ $(document).ready(
                 areaNumeros,
                 new ComponentsController(),
                 contador,
-//                new EventLogger()
+                new Sounder(MAX)
+                //                new EventLogger()
             ];
 
             worker.addEventListener("message", (e) => listeners.forEach(l => l.notify(e.data)));
@@ -188,7 +189,7 @@ class AreaNumeros {
                 .prop("title", i)
                 .css("width", `${width}%`)
                 .css("background-color", this.cores[i])
-                .prop("class", evento.positions.includes(i)? evento.type: "")
+                .prop("class", evento.positions.includes(i) ? evento.type : "")
             );
 
         this.campoNumeros.html(elementos);
@@ -209,6 +210,10 @@ class Counter {
         this.totalTime = null;
     }
 
+    /**
+     * 
+     * @param {SortEvent} event
+     */
     notify(event) {
         switch (event.type) {
             case EventType.START:
@@ -232,8 +237,56 @@ class Counter {
 
 class EventLogger {
 
+    /**
+     * 
+     * @param {SortEvent} event
+     */
     notify(event) {
         console.log(event);
+    }
+
+}
+
+class Sounder {
+
+
+    constructor(maxValue) {
+        this.maxValue = maxValue * 1.0;
+        this.soundFactor = 10000.0;
+
+        this.context = new AudioContext();
+        this.oscillator = this.context.createOscillator();
+        this.oscillator.type = "square";
+
+        let gain = this.context.createGain();
+        gain.gain.value = 0.2;
+        this.oscillator.connect(gain);
+        gain.connect(this.context.destination);
+    }
+
+    /**
+     * 
+     * @param {SortEvent} event
+     */
+    notify(event) {
+        switch (event.type) {
+            case EventType.START:
+                this.oscillator.start(0);
+                break;
+            case EventType.ENDED:
+                this.oscillator.stop();
+                if (this.context.close) { // MS has not context.close
+                    this.context.close();
+                }
+                break;
+            case EventType.COMPARSION:
+            case EventType.SWAP:
+                event.positions.forEach(pos =>
+                    this.oscillator.frequency.value = (event.elements[pos] / this.maxValue) * this.soundFactor
+                );
+                break;
+        }
+        //        oscillator.frequency.value = self.values[i] * self.soundFactor;
     }
 
 }
