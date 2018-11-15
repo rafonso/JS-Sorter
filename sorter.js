@@ -1,37 +1,5 @@
 "use strict";
 
-/**
- * Tipo de Evento.
- */
-const EventType = {
-    /** Vai iniciar a ordenação. */
-    START: Symbol("Start"),
-    /** Será feita a comparação. */
-    COMPARSION: Symbol("Comparsion"),
-    /** Dois valores foram trocados. */
-    SWAP: Symbol("Swap"),
-    /** A ordenação foi finalizada. */
-    ENDED: Symbol("Ended")
-}
-
-class SortEvent {
-
-    /**
-     * 
-     * @param {EventType} type Tipo do Evento
-     * @param {Array<Element>} elements 
-     * @param {Number} position1 
-     * @param {Number} position2 
-     */
-    constructor(type, elements, position1, position2) {
-        this.type = type;
-        this.elements = elements;
-        this.position1 = position1;
-        this.position2 = position2;
-    }
-
-}
-
 class Sorter {
 
     constructor() {
@@ -61,6 +29,15 @@ class Sorter {
      * @param {SortEvent} event 
      */
     notifyAll(event) {
+
+        var start = new Date().getTime();
+        for (var i = 0; i < 1e7; i++) {
+            if ((new Date().getTime() - start) > 10) {
+                break;
+            }
+        }
+
+
         this._observers.forEach(listener => listener(event));
     }
 
@@ -75,7 +52,7 @@ class Sorter {
     isLesser(elements, pos1, pos2) {
         this.notifyAll(new SortEvent(EventType.COMPARSION, elements, pos1, pos2));
 
-        return elements[pos1].isLesser(elements[pos2]);
+        return elements[pos1] < elements[pos2];
     }
 
     /**

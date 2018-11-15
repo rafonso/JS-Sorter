@@ -47,42 +47,75 @@ function toRgb(x, normalizador = (x) => x) {
 
 }
 
-function f(x) {
-    return x / MAX;
-}
-
 $(document).ready(
     function () {
         let valores = [];
+        let cores = [];
+        let elementos = [];
         let campoNumeros = $("#numeros");
 
         $("#btnGerarNumeros").click(function () {
             valores = [];
+            cores = [];
+            let width = 100 / MAX;
+
+            campoNumeros.empty();
             for (var i = 0; i < MAX; i++) {
-                valores.push(new Element(i, $(`<div>${i}</div>`).css("background-color", toRgb(i, x => x / MAX))));
+                valores.push(i);
+                cores[i] = toRgb(i, x => x / MAX);
             }
             shuffleArray(valores);
 
-            // console.log(valores);
-            campoNumeros.html(valores.map(el => el.representation));
-        });
+            let loadEvent = new SortEvent(EventType.IDLE, valores);
+            carregarCampoNumeros(loadEvent, cores);
 
+
+/*
+            elementos =
+                valores.map(i =>
+                    $(`<div>&nbsp;</div>`)
+                    .prop("title", i)
+                    .css("width", `${width}%`)
+                    .css("background-color", cores[i])
+                );
+
+
+            // console.log(valores);
+            campoNumeros.html(elementos);
+*/
+});
         $("#btnOrdenar").click(function () {
+            let worker = new Worker('testeWorker.js');
+            let p = new Pauser();
+            worker.addEventListener("message", (e) => {
+                console.log(e.data);
+                p.notify(e);
+                carregarCampoNumeros(e.data, cores);
+            });
+
+            worker.postMessage(valores);
+
+            return;
+
+
+
             let sorter = new InsertionSorter();
             let pauser = new Pauser(1);
             let counter = new Counter();
 
-            sorter.subscribe(event => console.log(event.type, event.position1, event.position2, event.elements.map(el => el.value)));
+            //            sorter.subscribe(event => console.log(event.type, event.position1, event.position2, event.elements.map(el => el.value)));
             sorter.subscribe(event => campoNumeros.html("").html(event.elements.map(el => el.representation)));
-            sorter.subscribe(event => pauser.notify(event));
+            //            sorter.subscribe(event => pauser.notify(event));
             sorter.subscribe(event => counter.notify(event));
 
             sorter.run(valores);
 
-            console.log(`Comparações: ${counter.comparsions}, Trocas: ${counter.swaps}`);
+            console.log(`Comparações: ${counter.comparsions}, Trocas: ${counter.swaps}, Tempo: ${counter.totalTime} ms`);
         });
     }
 );
+
+
 
 
 class Pauser {
@@ -102,15 +135,45 @@ class Pauser {
 
 }
 
+/**
+ * 
+ * @param {SortEvent} event 
+ * @param {Array<string>} cores 
+ */
+function carregarCampoNumeros(event, cores) {
+    let campoNumeros = $("#numeros");
+    let width = 100 / MAX;
+
+    elementos =
+        event.elements.map(i =>
+            $(`<div>&nbsp;</div>`)
+            .prop("title", i)
+            .css("width", `${width}%`)
+            .css("background-color", cores[i])
+        );
+
+
+    // console.log(valores);
+    campoNumeros.html(elementos);
+}
+
 class Counter {
 
     constructor() {
         this.swaps = 0;
         this.comparsions = 0;
+        this.startDate = null;
+        this.totalTime = null;
     }
 
     notify(event) {
         switch (event.type) {
+            case EventType.START:
+                this.startDate = new Date();
+                break;
+            case EventType.ENDED:
+                this.totalTime = (new Date()).getTime() - this.startDate.getTime();
+                break;
             case EventType.COMPARSION:
                 this.comparsions++;
                 break;
