@@ -12,7 +12,7 @@ if ('function' === typeof importScripts) {
 	addEventListener('message', (e) => {
 		console.log(e.data);
 
-		let sorter = new InsertionSorter();
+		let sorter = new MergeSorter();
 		sorter.subscribe(event => postMessage(event));
 		sorter.run(e.data);
 	});
