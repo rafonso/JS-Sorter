@@ -253,7 +253,7 @@ class Sounder {
 
     constructor(maxValue) {
         this.maxValue = maxValue * 1.0;
-        this.soundFactor = 10000.0;
+        this.soundFactor = 5000.0;
 
         this.context = new AudioContext();
         this.oscillator = this.context.createOscillator();

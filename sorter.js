@@ -55,6 +55,20 @@ class Sorter {
     }
 
     /**
+     * 
+     * 
+     * @param {Array<number>} elements 
+     * @param {number} pos1 
+     * @param {number} pos2 
+     * @returns true
+     */
+    isLesserThanValue(elements, pos, value) {
+        this.notifyAll(new SortEvent(EventType.COMPARSION, elements, pos));
+
+        return elements[pos] < value;
+    }
+
+    /**
      * Swaps the values 
      * 
      * @param {Array<number>} elements Array
@@ -161,20 +175,63 @@ class InsertionSorter extends Sorter {
      * 
      * @param {Array<number>} elements 
      */
-    process(elemens) {
-        var i, len = elemens.length,
-            el, j;
+    process(elements) {
+        for (let i = 1; i < elements.length; i++) {
+            let el = elements[i];
+            let j = i;
 
-        for (i = 1; i < len; i++) {
-            el = elemens[i];
-            j = i;
-
-            while (j > 0 && elemens[j - 1] > el) {
-                this.setValue(elemens, j, elemens[j - 1]);
+            while (j > 0 && !this.isLesserThanValue(elements, j - 1, el)) {
+                this.setValue(elements, j, elements[j - 1]);
                 j--;
             }
 
-            this.setValue(elemens, j, el);
+            this.setValue(elements, j, el);
         }
     }
+}
+
+class MergeSorter extends Sorter {
+
+    constructor() {
+        super();
+    }
+
+    /**
+     * 
+     * @param {Array<number>} arr 
+     */
+    process(arr) {
+        let len = arr.length;
+        if (len < 2)
+            return arr;
+        let mid = Math.floor(len / 2),
+            left = arr.slice(0, mid),
+            right = arr.slice(mid);
+        //send left and right to the mergeSort to broke it down into pieces
+        //then merge those
+        this.merge(this.process(left), this.process(right));
+    }
+
+    /**
+     * 
+     * @param {Array<number>} left 
+     * @param {Array<number>} right 
+     */
+    merge(left, right) {
+        let result = [],
+            lLen = left.length,
+            rLen = right.length,
+            l = 0,
+            r = 0;
+        while (l < lLen && r < rLen) {
+            if (left[l] < right[r]) {
+                result.push(left[l++]);
+            } else {
+                result.push(right[r++]);
+            }
+        }
+        //remaining part needs to be addred to the result
+        return result.concat(left.slice(l)).concat(right.slice(r));
+    }
+
 }
