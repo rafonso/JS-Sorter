@@ -87,8 +87,8 @@ $(document).ready(
                 areaNumeros,
                 new ComponentsController(),
                 contador,
-                new Sounder(MAX)
-                //                new EventLogger()
+                new Sounder(MAX),
+                new EventLogger()
             ];
 
             worker.addEventListener("message", (e) => listeners.forEach(l => l.notify(e.data)));
