@@ -1,3 +1,5 @@
+"use strict";
+
 const MAX = 50;
 
 /**
@@ -93,7 +95,10 @@ $(document).ready(
 
             worker.addEventListener("message", (e) => listeners.forEach(l => l.notify(e.data)));
 
-            worker.postMessage(valores);
+            worker.postMessage({
+                "valores": valores,
+                "sorter": "Heap"
+            });
 
             // console.log(`Comparações: ${counter.comparsions}, Trocas: ${counter.swaps}, Tempo: ${counter.totalTime} ms`);
         });
@@ -249,7 +254,6 @@ class EventLogger {
 }
 
 class Sounder {
-
 
     constructor(maxValue) {
         this.maxValue = maxValue * 1.0;

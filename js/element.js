@@ -1,9 +1,10 @@
+"use strict";
 
 /**
  * Tipo de Evento.
  */
 const EventType = {
-    IDLE: "idle", 
+    IDLE: "idle",
     /** Vai iniciar a ordenação. */
     START: "start",
     /** Será feita a comparação. */
@@ -31,3 +32,12 @@ class SortEvent {
     }
 
 }
+
+const sorterType = new Map([
+    ['Bubble', () => new BubbleSorter()],
+    ['Selection', () => new SelectionSorter()],
+    ['Insertion', () => new InsertionSorter()],
+    ['Merge', () => new MergeSorter()],
+    ['Quick', () => new QuickSorter()],
+    ['Heap', () => new HeapSorter()]
+]);

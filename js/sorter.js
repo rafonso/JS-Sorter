@@ -1,5 +1,7 @@
 "use strict";
 
+
+
 class Sorter {
 
     constructor() {
@@ -30,8 +32,8 @@ class Sorter {
      */
     notifyAll(event) {
 
-        var start = new Date().getTime();
-        for (var i = 0; i < 1e7; i++) {
+        let start = new Date().getTime();
+        for (let i = 0; i < 1e7; i++) {
             if ((new Date().getTime() - start) > 10) {
                 break;
             }
@@ -128,9 +130,9 @@ class BubbleSorter extends Sorter {
      * @param {Array<number>} elements 
      */
     process(elements) {
-        var len = elements.length;
-        for (var i = len - 1; i >= 0; i--) {
-            for (var j = 1; j <= i; j++) {
+        let len = elements.length;
+        for (let i = len - 1; i >= 0; i--) {
+            for (let j = 1; j <= i; j++) {
                 if (!this.isLesser(elements, j - 1, j)) {
                     this.swap(elements, j - 1, j);
                 }
@@ -327,7 +329,7 @@ class QuickSorter extends Sorter {
      * @param {number} right 
      */
     quickSort(arr, left, right) {
-        var len = arr.length,
+        let len = arr.length,
             pivot,
             partitionIndex;
 
@@ -383,7 +385,7 @@ class HeapSorter extends Sorter {
     process(arr) {
         this.heapify(arr, arr.length);
 
-        for (var i = arr.length - 1; i > 0; i--) {
+        for (let i = arr.length - 1; i > 0; i--) {
             this.swap(arr, i, 0);
 
             this.max_heapify(arr, 0, i - 1);
@@ -396,7 +398,7 @@ class HeapSorter extends Sorter {
      * @param {number} len 
      */
     heapify(arr, length) {
-        for (var i = Math.floor(length/2); i >= 0; i--) {
+        for (let i = Math.floor(length/2); i >= 0; i--) {
             this.max_heapify(arr, i, length);
         }
     }
@@ -410,7 +412,7 @@ class HeapSorter extends Sorter {
     heapsort(arr) {
         this.heapify(arr, arr.length);
     
-        for (var i = arr.length - 1; i > 0; i--) {
+        for (let i = arr.length - 1; i > 0; i--) {
             this.swap(arr, i, 0);
     
             this.max_heapify(arr, 0, i-1);
@@ -419,9 +421,9 @@ class HeapSorter extends Sorter {
 
     max_heapify(arr, i, length) {
         while (true) {
-            var left = i*2 + 1;
-            var right = i*2 + 2;
-            var largest = i;
+            let left = i*2 + 1;
+            let right = i*2 + 2;
+            let largest = i;
     
             if (left < length && super.isLesser(arr, largest, left)) {
                 largest = left;
