@@ -90,14 +90,14 @@ $(document).ready(
                 new ComponentsController(),
                 contador,
                 new Sounder(MAX),
-                new EventLogger()
+                // new EventLogger()
             ];
 
             worker.addEventListener("message", (e) => listeners.forEach(l => l.notify(e.data)));
 
             worker.postMessage({
                 "valores": valores,
-                "sorter": "Heap"
+                "sorter": "Quick"
             });
 
             // console.log(`Comparações: ${counter.comparsions}, Trocas: ${counter.swaps}, Tempo: ${counter.totalTime} ms`);
@@ -146,28 +146,6 @@ class Pauser {
 
 }
 
-/**
- * 
- * @param {SortEvent} event 
- * @param {Array<string>} cores 
- */
-function carregarCampoNumeros(event, cores) {
-    let campoNumeros = $("#numeros");
-    let width = 100 / MAX;
-
-    elementos =
-        event.elements.map(i =>
-            $(`<div>&nbsp;</div>`)
-            .prop("title", i)
-            .css("width", `${width}%`)
-            .css("background-color", cores[i])
-        );
-
-
-    // console.log(valores);
-    campoNumeros.html(elementos);
-}
-
 class AreaNumeros {
 
     /**
@@ -190,7 +168,7 @@ class AreaNumeros {
         let width = 100.0 / evento.elements.length;
         let elementos =
             evento.elements.map(i =>
-                $(`<div>&nbsp;</div>`)
+                $(`<div></div>`)
                 .prop("title", i)
                 .css("width", `${width}%`)
                 .css("background-color", this.cores[i])
