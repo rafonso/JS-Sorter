@@ -80,7 +80,7 @@ $(document).ready(
         });
 
         $("#btnOrdenar").click(function () {
-            let worker = new Worker('testeWorker.js');
+            let worker = new Worker('./js/testeWorker.js');
 
             let contador = new Counter();
             let listeners = [

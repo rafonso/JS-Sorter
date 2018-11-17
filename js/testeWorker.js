@@ -6,8 +6,8 @@
  */
 if ('function' === typeof importScripts) {
 	importScripts(
-		"/element.js",
-		"/sorter.js");
+		"/js/element.js",
+		"/js/sorter.js");
 
 	addEventListener('message', (e) => {
 		console.log(e.data);

@@ -15,7 +15,7 @@ class Sorter {
 
     /**
      * 
-     * @param {fun} listener 
+     * @param {*} listener Classe 
      */
     unsubscribe(listener) {
         let index = this._observers.indexOf(listener);
@@ -115,7 +115,7 @@ class Sorter {
 }
 
 /*
- * https://khan4019.github.io/front-end-Interview-Questions/sort.html#bubbleSort
+ * Source: https://khan4019.github.io/front-end-Interview-Questions/sort.html#bubbleSort
  */
 class BubbleSorter extends Sorter {
 
@@ -141,7 +141,7 @@ class BubbleSorter extends Sorter {
 }
 
 /**
- * https://khan4019.github.io/front-end-Interview-Questions/sort.html#selectionSort
+ * Source: https://khan4019.github.io/front-end-Interview-Questions/sort.html#selectionSort
  */
 class SelectionSorter extends Sorter {
 
@@ -169,7 +169,7 @@ class SelectionSorter extends Sorter {
 }
 
 /**
- * https://khan4019.github.io/front-end-Interview-Questions/sort.html#insertionSort
+ * Source: https://khan4019.github.io/front-end-Interview-Questions/sort.html#insertionSort
  */
 class InsertionSorter extends Sorter {
 
@@ -197,7 +197,7 @@ class InsertionSorter extends Sorter {
 }
 
 /**
- * https://www.ime.usp.br/~pf/algoritmos/aulas/mrgsrt.html
+ * Source: https://www.ime.usp.br/~pf/algoritmos/aulas/mrgsrt.html
  */
 class MergeSorter extends Sorter {
 
@@ -304,7 +304,7 @@ class MergeSorter extends Sorter {
 }
 
 /**
- * https://khan4019.github.io/front-end-Interview-Questions/sort.html#quickSort
+ * Source: https://khan4019.github.io/front-end-Interview-Questions/sort.html#quickSort
  */
 class QuickSorter extends Sorter {
 
@@ -368,7 +368,7 @@ class QuickSorter extends Sorter {
 }
 
 /**
- * https://gist.github.com/gyoshev/4038839
+ * Source: https://gist.github.com/gyoshev/4038839
  */
 class HeapSorter extends Sorter {
 
