@@ -1,7 +1,5 @@
 "use strict";
 
-const MAX = 50;
-
 /**
  * Fonte: https://stackoverflow.com/a/12646864/1659543
  */
@@ -19,7 +17,7 @@ function shuffleArray(array) {
  */
 function gerarNumeros(quantidade) {
     let valores = [];
-    for (var i = 0; i < MAX; i++) {
+    for (var i = 0; i < quantidade; i++) {
         valores.push(i);
     }
     shuffleArray(valores);
@@ -66,50 +64,64 @@ function toRgb(x, normalizador = (x) => x) {
 
 $(document).ready(
     function () {
-        let areaNumeros = null;
-        let valores = [];
-        let cores = [];
-        // let campoNumeros = $("#numeros");
-
-        $("#btnGerarNumeros").click(function () {
-            valores = gerarNumeros(MAX);
-            cores = [];
-            valores.forEach((i) => {
-                cores[i] = toRgb(i, i => i / MAX)
-            });
-
-            areaNumeros = new AreaNumeros(new SortEvent(SortEvent.IDLE, valores), cores);
-        });
-
-        $("#btnOrdenar").click(function () {
-            let worker = new Worker('./js/testeWorker.js');
-
-            let contador = new Counter();
-            let listeners = [
-                areaNumeros,
-                new ComponentsController(),
-                contador,
-                new Sounder(MAX),
-                // new EventLogger()
-            ];
-
-            worker.addEventListener("message", (e) => listeners.forEach(l => l.notify(e.data)));
-
-            worker.postMessage({
-                "valores": valores,
-                "sorter": "Quick"
-            });
-
-            // console.log(`Comparações: ${counter.comparsions}, Trocas: ${counter.swaps}, Tempo: ${counter.totalTime} ms`);
-        });
+        let componentsController = new ComponentsController();
     }
 );
 
 class ComponentsController {
 
     constructor() {
-        this.btnGerarNumeros = $("#btnGerarNumeros");
-        this.btnOrdenar = $("#btnOrdenar");
+        this.valores = [];
+        this.cores = [];
+        this.areaNumeros = new AreaNumeros(new SortEvent(SortEvent.IDLE, this.valores), this.cores);
+
+        this.areaControles = $("#controles");
+        this.selQuantidade = $("#quantidade");
+        this.selTipo = $("#tipo").html(
+            "<option></option> " +
+            Array.from(sorterType.keys()).map(type => `<option>${type}</option> `)
+        );
+        let self = this;
+        this.btnGerarNumeros = $("#btnGerarNumeros").click(() => self.gerarValores());
+        this.btnOrdenar = $("#btnOrdenar").prop("disabled", "disabled").click(() => self.iniciarOrdenacao());
+        this.selTipo.change(function () {
+            self.btnOrdenar.prop("disabled", (!!self.valores && !!self.selTipo.val()) ? null : "disabled");
+        });
+    }
+
+    gerarValores() {
+        this.valores = gerarNumeros(this.selQuantidade.val());
+        this.cores = [];
+        this.valores.forEach((i) => {
+            this.cores[i] = toRgb(i, i => i / this.valores.length)
+        });
+
+
+        this.areaNumeros = new AreaNumeros(new SortEvent(SortEvent.IDLE, this.valores), this.cores);
+        this.btnOrdenar.prop("disabled", (!!this.selTipo.val()) ? null : "disabled");
+    }
+
+    iniciarOrdenacao() {
+        let worker = new Worker('./js/testeWorker.js');
+
+        let contador = new Counter();
+        let listeners = [
+            this,
+            this.areaNumeros,
+            contador,
+            new Sounder(this.valores.length)
+            // new EventLogger()
+        ];
+
+        worker.addEventListener("message", (e) => listeners.forEach(l => {
+            // console.log(l, l.notify);
+            l.notify(e.data);
+        }));
+
+        worker.postMessage({
+            "valores": this.valores,
+            "sorter": this.selTipo.val()
+        });
     }
 
     /**
@@ -118,11 +130,9 @@ class ComponentsController {
      */
     notify(event) {
         if (event.type === EventType.START) {
-            this.btnGerarNumeros.attr("disabled", "disabled");
-            this.btnOrdenar.attr("disabled", "disabled");
+            $("#controles").children("input, button, select").prop("disabled", "disabled");
         } else if (event.type === EventType.ENDED) {
-            this.btnGerarNumeros.attr("disabled", null);
-            this.btnOrdenar.attr("disabled", null);
+            $("#controles").children("input, button, select").prop("disabled", null);
         }
     }
 

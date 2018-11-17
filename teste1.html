@@ -1,20 +1,62 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html>
+
 <head>
   <title>Teste</title>
   <link rel="stylesheet" type="text/css" href="./css/teste1.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30="
+    crossorigin="anonymous"></script>
   <script src="./js/teste.js"></script>
   <script src="./js/element.js"></script>
   <script src="./js/sorter.js"></script>
 </head>
+
 <body>
-<button id="btnGerarNumeros">Gerar Números</button>
-<br/>
-<br/>
-<div id="numeros"></div>
-<br/>
-<br/>
-<button id="btnOrdenar">Ordenar</button>
+  <div id="controles">
+    <label for="quantidade">Quantidade:</label>
+    <select id="quantidade">
+      <option>5</option>
+      <option>10</option>
+      <option>20</option>
+      <option selected="selected">50</option>
+      <option>100</option>
+      <option>200</option>
+      <option>500</option>
+      <option>1000</option>
+    </select>
+
+    <label for="tipo">Tipo:</label>
+    <select id="tipo">
+      <option>5</option>
+      <option>10</option>
+      <option>20</option>
+      <option selected="selected">50</option>
+      <option>100</option>
+      <option>200</option>
+      <option>500</option>
+      <option>1000</option>
+    </select>
+
+    <div></div>
+    <div></div>
+
+    <button id="btnGerarNumeros">Gerar Números</button>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+
+    <button id="btnOrdenar">Ordenar</button>
+  </div>
+
+  <br />
+  <br />
+  <div id="numeros"></div>
+  <br />
+  <br />
+
 </body>
+
 </html>
