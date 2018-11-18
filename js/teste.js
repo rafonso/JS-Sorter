@@ -81,6 +81,8 @@ class ComponentsController {
             "<option></option> " +
             Array.from(sorterType.keys()).map(type => `<option>${type}</option> `)
         );
+        this.btnAtivarSom =  $("#ativarSom");
+
         let self = this;
         this.btnGerarNumeros = $("#btnGerarNumeros").click(() => self.gerarValores());
         this.btnOrdenar = $("#btnOrdenar").prop("disabled", "disabled").click(() => self.iniciarOrdenacao());
@@ -105,13 +107,16 @@ class ComponentsController {
         let worker = new Worker('./js/testeWorker.js');
 
         let contador = new Counter();
+
         let listeners = [
             this,
             this.areaNumeros,
-            contador,
-            new Sounder(this.valores.length)
+            contador            
             // new EventLogger()
         ];
+        if(this.btnAtivarSom .is(":checked")) {
+            listeners.push(new Sounder(this.valores.length));
+        }
 
         worker.addEventListener("message", (e) => listeners.forEach(l => {
             // console.log(l, l.notify);
@@ -129,10 +134,12 @@ class ComponentsController {
      * @param {EventType} event 
      */
     notify(event) {
+        let controles = $("#controles").find("input, button, select");
         if (event.type === EventType.START) {
-            $("#controles").children("input, button, select").prop("disabled", "disabled");
+            controles.prop("disabled", "disabled");
         } else if (event.type === EventType.ENDED) {
-            $("#controles").children("input, button, select").prop("disabled", null);
+            controles.prop("disabled", null);
+            this.btnOrdenar.prop("disabled", "disabled");
         }
     }
 
@@ -244,17 +251,29 @@ class EventLogger {
 class Sounder {
 
     constructor(maxValue) {
-        this.maxValue = maxValue * 1.0;
+        this.maxValue = maxValue;
         this.soundFactor = 5000.0;
 
         this.context = new AudioContext();
         this.oscillator = this.context.createOscillator();
-        this.oscillator.type = "square";
 
         let gain = this.context.createGain();
         gain.gain.value = 0.2;
         this.oscillator.connect(gain);
         gain.connect(this.context.destination);
+    }
+
+    /**
+     * 
+     * @param {Array<number>} elements 
+     * @param {Array<number>} positions 
+     * @param {string} type 
+     */
+    emitSound(elements, positions, type) {
+        this.oscillator.type = type;
+        positions.forEach(pos =>
+            this.oscillator.frequency.value = (elements[pos] / this.maxValue) * this.soundFactor
+        );
     }
 
     /**
@@ -272,15 +291,17 @@ class Sounder {
                     this.context.close();
                 }
                 break;
+                // "sine", "square", "sawtooth", "triangle"
             case EventType.COMPARSION:
+                this.emitSound(event.elements, event.positions, "sine");
+                break;
             case EventType.SET:
+                this.emitSound(event.elements, event.positions, "square");
+                break;
             case EventType.SWAP:
-                event.positions.forEach(pos =>
-                    this.oscillator.frequency.value = (event.elements[pos] / this.maxValue) * this.soundFactor
-                );
+                this.emitSound(event.elements, event.positions, "sawtooth");
                 break;
         }
-        //        oscillator.frequency.value = self.values[i] * self.soundFactor;
     }
 
 }
