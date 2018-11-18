@@ -398,7 +398,7 @@ class HeapSorter extends Sorter {
      * @param {number} len 
      */
     heapify(arr, length) {
-        for (let i = Math.floor(length/2); i >= 0; i--) {
+        for (let i = Math.floor(length / 2); i >= 0; i--) {
             this.max_heapify(arr, i, length);
         }
     }
@@ -411,35 +411,136 @@ class HeapSorter extends Sorter {
      */
     heapsort(arr) {
         this.heapify(arr, arr.length);
-    
+
         for (let i = arr.length - 1; i > 0; i--) {
             this.swap(arr, i, 0);
-    
-            this.max_heapify(arr, 0, i-1);
+
+            this.max_heapify(arr, 0, i - 1);
         }
     }
 
     max_heapify(arr, i, length) {
         while (true) {
-            let left = i*2 + 1;
-            let right = i*2 + 2;
+            let left = i * 2 + 1;
+            let right = i * 2 + 2;
             let largest = i;
-    
+
             if (left < length && super.isLesser(arr, largest, left)) {
                 largest = left;
             }
-            
+
             if (right < length && super.isLesser(arr, largest, right)) {
                 largest = right;
             }
-    
+
             if (i == largest) {
                 break;
             }
-    
+
             super.swap(arr, i, largest);
             i = largest;
         }
     }
 
+}
+
+
+/**
+ * Source: https://www.w3resource.com/javascript-exercises/searching-and-sorting-algorithm/searching-and-sorting-algorithm-exercise-6.php
+ */
+class ShellSorter extends Sorter {
+
+    constructor() {
+        super();
+    }
+
+    /**
+     * 
+     * @param {Array<number>} arr 
+     */
+    process(arr) {
+        let increment = arr.length / 2;
+        while (increment > 0) {
+            for (let i = increment; i < arr.length; i++) {
+                let j = i;
+                let temp = arr[i];
+
+                while (j >= increment && !super.isLesserThanValue(arr, j - increment, temp)) {
+                    super.setValue(arr, j, arr[j - increment]);
+                    j = j - increment;
+                }
+
+                super.setValue(arr, j, temp);
+            }
+
+            if (increment == 2) {
+                increment = 1;
+            } else {
+                increment = parseInt(increment * 5 / 11);
+            }
+        }
+    }
+
+}
+
+/**
+ * Source: https://gist.github.com/hiroshi-maybe/4701011
+ */
+class CombSorter extends Sorter {
+
+    constructor() {
+        super();
+    }
+
+    /**
+     * 
+     * @param {Array<number>} arr 
+     */
+    process(array) {
+        var interval = Math.floor(array.length / 1.3);
+        while (interval > 0) {
+            for (var i = 0; i + interval < array.length; i += 1) {
+                if (super.isLesser(array, i + interval, i)) {
+                    super.swap(array, i, i + interval);
+                }
+            }
+            interval = Math.floor(interval / 1.3);
+        }
+    }
+}
+
+/**
+ * Source: https://gist.github.com/zekeair/4498a1847a8742276107
+ */
+class CocktailSorter extends Sorter {
+
+    constructor() {
+        super();
+    }
+
+    /**
+     * 
+     * @param {Array<number>} arr 
+     */
+    process(array) {
+        let i, left = 0,
+            right = array.length - 1;
+
+        while (left < right) {
+            for (i = left; i < right; i++) {
+                if (super.isLesser(array, i + 1, i)) {
+                    super.swap(array, i, i + 1);
+                }
+            }
+
+            right--;
+            for (i = right; i > left; i--) {
+                if (super.isLesser(array, i, i - 1)) {
+                    super.swap(array, i - 1, i);
+                }
+            }
+
+            left++;
+        }
+    }
 }

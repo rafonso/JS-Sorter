@@ -34,10 +34,13 @@ class SortEvent {
 }
 
 const sorterType = new Map([
-    ['Bubble', () => new BubbleSorter()],
-    ['Selection', () => new SelectionSorter()],
-    ['Insertion', () => new InsertionSorter()],
-    ['Merge', () => new MergeSorter()],
-    ['Quick', () => new QuickSorter()],
-    ['Heap', () => new HeapSorter()]
+    ['Bubble'   , () => new BubbleSorter    ()],
+    ['Cocktail' , () => new CocktailSorter  ()],
+    ['Selection', () => new SelectionSorter ()],
+    ['Insertion', () => new InsertionSorter ()],
+    ['Comb'     , () => new CombSorter      ()],
+    ['Heap'     , () => new HeapSorter      ()],
+    ['Shell'    , () => new ShellSorter     ()],
+    ['Merge'    , () => new MergeSorter     ()],
+    ['Quick'    , () => new QuickSorter     ()]
 ]);
