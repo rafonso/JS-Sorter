@@ -81,7 +81,7 @@ class ComponentsController {
             "<option></option> " +
             Array.from(sorterType.keys()).map(type => `<option>${type}</option> `)
         );
-        this.btnAtivarSom =  $("#ativarSom");
+        this.btnAtivarSom = $("#ativarSom");
 
         let self = this;
         this.btnGerarNumeros = $("#btnGerarNumeros").click(() => self.gerarValores());
@@ -89,6 +89,10 @@ class ComponentsController {
         this.selTipo.change(function () {
             self.btnOrdenar.prop("disabled", (!!self.valores && !!self.selTipo.val()) ? null : "disabled");
         });
+
+        this.txtComparacoes = $("#comparacoes");
+        this.txtTrocas = $("#trocas");
+        this.txtTempo = $("#tempo");
     }
 
     gerarValores() {
@@ -101,20 +105,23 @@ class ComponentsController {
 
         this.areaNumeros = new AreaNumeros(new SortEvent(SortEvent.IDLE, this.valores), this.cores);
         this.btnOrdenar.prop("disabled", (!!this.selTipo.val()) ? null : "disabled");
+        this.txtComparacoes.val(null);
+        this.txtTrocas.val(null);
+        this.txtTempo.val(null);
     }
 
     iniciarOrdenacao() {
         let worker = new Worker('./js/testeWorker.js');
 
-        let contador = new Counter();
+        this.contador = new Counter();
 
         let listeners = [
             this,
             this.areaNumeros,
-            contador            
+            this.contador
             // new EventLogger()
         ];
-        if(this.btnAtivarSom .is(":checked")) {
+        if (this.btnAtivarSom.is(":checked")) {
             listeners.push(new Sounder(this.valores.length));
         }
 
@@ -140,6 +147,11 @@ class ComponentsController {
         } else if (event.type === EventType.ENDED) {
             controles.prop("disabled", null);
             this.btnOrdenar.prop("disabled", "disabled");
+            this.txtTempo.val(`${this.contador.currentTime} ms`);
+        } else {
+            this.txtComparacoes.val(this.contador.comparsions);
+            this.txtTrocas.val(this.contador.swaps);
+            this.txtTempo.val(`${this.contador.currentTime} ms`);
         }
     }
 
@@ -232,8 +244,12 @@ class Counter {
                 this.swaps++;
                 break;
         }
-
     }
+
+    get currentTime() {
+        return Date.now() - this.startDate.getTime();
+    }
+
 }
 
 class EventLogger {

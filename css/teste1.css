@@ -14,6 +14,10 @@ body {
     text-align: right;
 }
 
+input.numerico {
+    text-align: right;
+}
+
 .box {
     background-color: #444;
     color: #fff;
