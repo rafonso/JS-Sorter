@@ -38,9 +38,9 @@ const sorterType = new Map([
     ['Cocktail' , () => new CocktailSorter  ()],
     ['Selection', () => new SelectionSorter ()],
     ['Insertion', () => new InsertionSorter ()],
-    ['Comb'     , () => new CombSorter      ()],
     ['Heap'     , () => new HeapSorter      ()],
     ['Shell'    , () => new ShellSorter     ()],
+    ['Comb'     , () => new CombSorter      ()],
     ['Merge'    , () => new MergeSorter     ()],
     ['Quick'    , () => new QuickSorter     ()]
 ]);

@@ -133,8 +133,8 @@ class BubbleSorter extends Sorter {
         let len = elements.length;
         for (let i = len - 1; i >= 0; i--) {
             for (let j = 1; j <= i; j++) {
-                if (!this.isLesser(elements, j - 1, j)) {
-                    this.swap(elements, j - 1, j);
+                if (super.isLesser(elements, j, j - 1)) {
+                    super.swap(elements, j - 1, j);
                 }
             }
         }
@@ -161,11 +161,11 @@ class SelectionSorter extends Sorter {
         for (let i = 0; i < len; i++) {
             minIdx = i;
             for (let j = i + 1; j < len; j++) {
-                if (!this.isLesser(elements, minIdx, j)) {
+                if (super.isLesser(elements, j, minIdx)) {
                     minIdx = j;
                 }
             }
-            this.swap(elements, i, minIdx);
+            super.swap(elements, i, minIdx);
         }
     }
 }
@@ -188,12 +188,12 @@ class InsertionSorter extends Sorter {
             let el = elements[i];
             let j = i;
 
-            while (j > 0 && !this.isLesserThanValue(elements, j - 1, el)) {
-                this.setValue(elements, j, elements[j - 1]);
+            while (j > 0 && !super.isLesserThanValue(elements, j - 1, el)) {
+                super.setValue(elements, j, elements[j - 1]);
                 j--;
             }
 
-            this.setValue(elements, j, el);
+            super.setValue(elements, j, el);
         }
     }
 }
@@ -217,43 +217,7 @@ class MergeSorter extends Sorter {
         }
 
         this.mergesort_i(arr);
-
-        /*
-        console.log(arr);
-        let len = arr.length;
-        let mid = Math.floor(len / 2),
-            left = arr.slice(0, mid),
-            right = arr.slice(mid);
-        //send left and right to the mergeSort to broke it down into pieces
-        //then merge those
-        this.merge(this.process(left), this.process(right));
-        */
     }
-
-    /**
-     * 
-     * @param {Array<number>} left 
-     * @param {Array<number>} right 
-     */
-    merge(left, right) {
-        console.log(left, right);
-
-        let result = [],
-            lLen = left.length,
-            rLen = right.length,
-            l = 0,
-            r = 0;
-        while (l < lLen && r < rLen) {
-            if (left[l] < right[r]) {
-                result.push(left[l++]);
-            } else {
-                result.push(right[r++]);
-            }
-        }
-        //remaining part needs to be addred to the result
-        return result.concat(left.slice(l)).concat(right.slice(r));
-    }
-
 
     /**
      * 
@@ -296,10 +260,8 @@ class MergeSorter extends Sorter {
         for (let k = p; k < r; ++k) {
             if (w[i] <= w[j]) {
                 super.setValue(v, k, w[i++]);
-                // v[k] = w[i++];
             } else {
                 super.setValue(v, k, w[j--]);
-                // v[k] = w[j--];
             }
         }
     }
@@ -329,13 +291,9 @@ class QuickSorter extends Sorter {
      * @param {number} right 
      */
     quickSort(arr, left, right) {
-        let len = arr.length,
-            pivot,
-            partitionIndex;
-
         if (left < right) {
-            pivot = right;
-            partitionIndex = this.partition(arr, pivot, left, right);
+            let pivot = right;
+            let partitionIndex = this.partition(arr, pivot, left, right);
 
             //sort left and right
             this.quickSort(arr, left, partitionIndex - 1);
@@ -357,7 +315,7 @@ class QuickSorter extends Sorter {
             partitionIndex = left;
 
         for (let i = left; i < right; i++) {
-            if (arr[i] < pivotValue) {
+            if (super.isLesserThanValue(arr, i, pivotValue)) {
                 super.swap(arr, i, partitionIndex);
                 partitionIndex++;
             }
@@ -386,8 +344,7 @@ class HeapSorter extends Sorter {
         this.heapify(arr, arr.length);
 
         for (let i = arr.length - 1; i > 0; i--) {
-            this.swap(arr, i, 0);
-
+            super.swap(arr, i, 0);
             this.max_heapify(arr, 0, i - 1);
         }
     }
@@ -400,22 +357,6 @@ class HeapSorter extends Sorter {
     heapify(arr, length) {
         for (let i = Math.floor(length / 2); i >= 0; i--) {
             this.max_heapify(arr, i, length);
-        }
-    }
-
-    /**
-     * 
-     * @param {Array<number>} arr 
-     * @param {number} start 
-     * @param {number} end 
-     */
-    heapsort(arr) {
-        this.heapify(arr, arr.length);
-
-        for (let i = arr.length - 1; i > 0; i--) {
-            this.swap(arr, i, 0);
-
-            this.max_heapify(arr, 0, i - 1);
         }
     }
 
@@ -433,7 +374,7 @@ class HeapSorter extends Sorter {
                 largest = right;
             }
 
-            if (i == largest) {
+            if (i === largest) {
                 break;
             }
 
@@ -467,17 +408,13 @@ class ShellSorter extends Sorter {
 
                 while (j >= increment && !super.isLesserThanValue(arr, j - increment, temp)) {
                     super.setValue(arr, j, arr[j - increment]);
-                    j = j - increment;
+                    j -= increment;
                 }
 
                 super.setValue(arr, j, temp);
             }
 
-            if (increment == 2) {
-                increment = 1;
-            } else {
-                increment = parseInt(increment * 5 / 11);
-            }
+            increment = (increment === 2) ? 1 : parseInt(increment * 5 / 11);
         }
     }
 
@@ -497,9 +434,9 @@ class CombSorter extends Sorter {
      * @param {Array<number>} arr 
      */
     process(array) {
-        var interval = Math.floor(array.length / 1.3);
+        let interval = Math.floor(array.length / 1.3);
         while (interval > 0) {
-            for (var i = 0; i + interval < array.length; i += 1) {
+            for (let i = 0; i + interval < array.length; i += 1) {
                 if (super.isLesser(array, i + interval, i)) {
                     super.swap(array, i, i + interval);
                 }
