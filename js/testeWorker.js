@@ -1,11 +1,12 @@
 "use strict";
 
 function startSorter(e) {
-	console.log(e.data);
+	let params = e.data;
+	console.log(params);
 
-	let sorter = sorterType.get(e.data.sorter)();
+	let sorter = sorterType.get(params.sorter)(params.pauseTime);
 	sorter.subscribe(postMessage);
-	sorter.run(e.data.valores);
+	sorter.run(params.valores);
 }
 
 /**

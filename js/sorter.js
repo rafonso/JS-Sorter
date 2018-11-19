@@ -4,9 +4,23 @@
 
 class Sorter {
 
-    constructor() {
+    /**
+     * 
+     * @param {number} pauseTime tempo de pausa entre cada evento.
+     */
+    constructor(pauseTime) {
         this._observers = [];
         this._started = false;
+
+        this.wait = (pauseTime === 0) ? () => {} :
+            () => {
+                let start = Date.now();
+                for (let i = 0; i < 1e7; i++) {
+                    if ((Date.now() - start) > pauseTime) {
+                        break;
+                    }
+                }
+            }
     }
 
     // Observer pattern - source: https://medium.com/@majdasab/observer-pattern-with-javascript-es6-classes-2a19851e1506
@@ -31,13 +45,7 @@ class Sorter {
      * @param {SortEvent} event 
      */
     notifyAll(event) {
-
-        let start = new Date().getTime();
-        for (let i = 0; i < 1e7; i++) {
-            if ((new Date().getTime() - start) > 10) {
-                break;
-            }
-        }
+        this.wait();
 
         this._observers.forEach(listener => listener(event));
     }
@@ -121,8 +129,12 @@ class Sorter {
  */
 class BubbleSorter extends Sorter {
 
-    constructor() {
-        super();
+    /**
+     * 
+     * @param {number} pauseTime tempo de pausa entre cada evento.
+     */
+    constructor(pauseTime) {
+        super(pauseTime);
     }
 
     /**
@@ -147,8 +159,12 @@ class BubbleSorter extends Sorter {
  */
 class SelectionSorter extends Sorter {
 
-    constructor() {
-        super();
+    /**
+     * 
+     * @param {number} pauseTime tempo de pausa entre cada evento.
+     */
+    constructor(pauseTime) {
+        super(pauseTime);
     }
 
     /**
@@ -175,8 +191,12 @@ class SelectionSorter extends Sorter {
  */
 class InsertionSorter extends Sorter {
 
-    constructor() {
-        super();
+    /**
+     * 
+     * @param {number} pauseTime tempo de pausa entre cada evento.
+     */
+    constructor(pauseTime) {
+        super(pauseTime);
     }
 
     /**
@@ -203,8 +223,12 @@ class InsertionSorter extends Sorter {
  */
 class MergeSorter extends Sorter {
 
-    constructor() {
-        super();
+    /**
+     * 
+     * @param {number} pauseTime tempo de pausa entre cada evento.
+     */
+    constructor(pauseTime) {
+        super(pauseTime);
     }
 
     /**
@@ -272,8 +296,12 @@ class MergeSorter extends Sorter {
  */
 class QuickSorter extends Sorter {
 
-    constructor() {
-        super();
+    /**
+     * 
+     * @param {number} pauseTime tempo de pausa entre cada evento.
+     */
+    constructor(pauseTime) {
+        super(pauseTime);
     }
 
     /**
@@ -332,8 +360,12 @@ class QuickSorter extends Sorter {
  */
 class HeapSorter extends Sorter {
 
-    constructor() {
-        super();
+    /**
+     * 
+     * @param {number} pauseTime tempo de pausa entre cada evento.
+     */
+    constructor(pauseTime) {
+        super(pauseTime);
     }
 
     /**
@@ -391,8 +423,12 @@ class HeapSorter extends Sorter {
  */
 class ShellSorter extends Sorter {
 
-    constructor() {
-        super();
+    /**
+     * 
+     * @param {number} pauseTime tempo de pausa entre cada evento.
+     */
+    constructor(pauseTime) {
+        super(pauseTime);
     }
 
     /**
@@ -425,8 +461,12 @@ class ShellSorter extends Sorter {
  */
 class CombSorter extends Sorter {
 
-    constructor() {
-        super();
+    /**
+     * 
+     * @param {number} pauseTime tempo de pausa entre cada evento.
+     */
+    constructor(pauseTime) {
+        super(pauseTime);
     }
 
     /**
@@ -451,8 +491,12 @@ class CombSorter extends Sorter {
  */
 class CocktailSorter extends Sorter {
 
-    constructor() {
-        super();
+    /**
+     * 
+     * @param {number} pauseTime tempo de pausa entre cada evento.
+     */
+    constructor(pauseTime) {
+        super(pauseTime);
     }
 
     /**

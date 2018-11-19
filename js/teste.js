@@ -30,6 +30,7 @@ class ComponentsController {
 
         this.btnAtivarSom = $("#ativarSom");
         this.btnAtivarConsole = $("#ativarConsole");
+        this.selIntervalo = $("#intervalo");
 
         let self = this;
         this.btnGerarNumeros = $("#btnGerarNumeros").click(() => self.gerarValores());
@@ -75,14 +76,12 @@ class ComponentsController {
             listeners.push(new Sounder(this.valores.length));
         }
 
-        worker.addEventListener("message", (e) => listeners.forEach(l => {
-            // console.log(l, l.notify);
-            l.notify(e.data);
-        }));
+        worker.addEventListener("message", (e) => listeners.forEach(l => l.notify(e.data)));
 
         worker.postMessage({
             "valores": this.valores,
-            "sorter": this.selTipo.val()
+            "sorter": this.selTipo.val(),
+            "pauseTime": Number.parseInt(this.selIntervalo.val())
         });
     }
 
@@ -110,22 +109,6 @@ class ComponentsController {
 }
 
 
-class Pauser {
-
-    constructor(sleepTime = 10) {
-        this.sleepTime = sleepTime;
-    }
-
-    notify(event) {
-        var start = new Date().getTime();
-        for (var i = 0; i < 1e7; i++) {
-            if ((new Date().getTime() - start) > this.sleepTime) {
-                break;
-            }
-        }
-    }
-
-}
 
 class AreaNumeros {
 
@@ -175,7 +158,7 @@ class EventLogger {
      */
     notify(event) {
         let saida = `${event.type}`;
-        if(event.positions.length > 0) {
+        if (event.positions.length > 0) {
             saida += ` (${event.positions})`
         }
         saida += ` : ${event.elements}`;
