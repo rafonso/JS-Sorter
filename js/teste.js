@@ -1,67 +1,5 @@
 "use strict";
 
-/**
- * Fonte: https://stackoverflow.com/a/12646864/1659543
- */
-function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-    }
-}
-
-/**
- * 
- * @param {number} quantidade 
- * @returns {Array<number>}
- */
-function gerarNumeros(quantidade) {
-    let valores = [];
-    for (var i = 0; i < quantidade; i++) {
-        valores.push(i);
-    }
-    shuffleArray(valores);
-
-    return valores;
-}
-
-let linear = {
-    r: (x) => {
-        if (x < 0.2)
-            return 0.29 - 1.45 * x;
-        if (x < 0.4)
-            return 0.00;
-        if (x < 0.6)
-            return -2.00 + 5.00 * x;
-        if (x < 0.8)
-            return 1.39 - 0.65 * x;
-        return 0.35 + 0.65 * x;
-    },
-    g: (x) => {
-        if (x < 0.2)
-            return 0.00;
-        if (x < 0.4)
-            return -1.00 + 5.00 * x;
-        if (x <= 0.6)
-            return 1.00;
-        return 2.50 - 2.50 * x;
-    },
-    b: (x) => {
-        if (x < 0.2)
-            return 0.50 + 2.50 * x;
-        if (x < 0.4)
-            return 2.00 - 5.00 * x;
-        return 0;
-    }
-};
-
-function toRgb(x, normalizador = (x) => x) {
-    let valor = normalizador(x);
-
-    return `rgb(${255 * linear.r(valor)},${255 * linear.g(valor)},${255 * linear.b(valor)})`;
-
-}
-
 $(document).ready(
     function () {
         let componentsController = new ComponentsController();
@@ -106,7 +44,6 @@ class ComponentsController {
 
     gerarValores() {
         this.valores = gerarSequencia(parseInt(this.selQuantidade.val()), this.selSequencia.val());
-        // gerarNumeros(this.selQuantidade.val());
         this.cores = [];
         this.valores.forEach((i) => {
             this.cores[i] = toRgb(i, i => i / this.valores.length)
@@ -126,9 +63,9 @@ class ComponentsController {
         this.contador = new Counter();
 
         let listeners = [
+            this.contador,
             this,
-            this.areaNumeros,
-            this.contador
+            this.areaNumeros
             // new EventLogger()
         ];
         if (this.btnAtivarSom.is(":checked")) {
@@ -157,7 +94,9 @@ class ComponentsController {
         } else if (event.type === EventType.ENDED) {
             controles.prop("disabled", null);
             this.btnOrdenar.prop("disabled", "disabled");
-            this.txtTempo.val(`${this.contador.currentTime} ms`);
+            this.txtComparacoes.val(this.contador.comparsions);
+            this.txtTrocas.val(this.contador.swaps);
+            this.txtTempo.val(`${this.contador.totalTime} ms`);
         } else {
             this.txtComparacoes.val(this.contador.comparsions);
             this.txtTrocas.val(this.contador.swaps);
@@ -210,6 +149,7 @@ class AreaNumeros {
                 $(`<div></div>`)
                 .prop("title", i)
                 .css("width", `${width}%`)
+                // (evento.elements.length > 100)? '': 
                 .css("background-color", this.cores[i])
                 .prop("class", evento.positions.includes(i) ? evento.type : "")
             );
@@ -223,44 +163,6 @@ class AreaNumeros {
 
 }
 
-class Counter {
-
-    constructor() {
-        this.swaps = 0;
-        this.comparsions = 0;
-        this.startDate = null;
-        this.totalTime = null;
-    }
-
-    /**
-     * 
-     * @param {SortEvent} event
-     */
-    notify(event) {
-        switch (event.type) {
-            case EventType.START:
-                this.startDate = new Date();
-                break;
-            case EventType.ENDED:
-                this.totalTime = (new Date()).getTime() - this.startDate.getTime();
-
-                console.log(`Comparações: ${this.comparsions}, Trocas: ${this.swaps}, Tempo: ${this.totalTime} ms`);
-                break;
-            case EventType.COMPARSION:
-                this.comparsions++;
-                break;
-            case EventType.SWAP:
-            case EventType.SET:
-                this.swaps++;
-                break;
-        }
-    }
-
-    get currentTime() {
-        return Date.now() - this.startDate.getTime();
-    }
-
-}
 
 class EventLogger {
 
@@ -270,153 +172,6 @@ class EventLogger {
      */
     notify(event) {
         console.log(event);
-    }
-
-}
-
-class Sounder {
-
-    constructor(maxValue) {
-        this.maxValue = maxValue;
-        this.soundFactor = 5000.0;
-
-        this.context = new AudioContext();
-        this.oscillator = this.context.createOscillator();
-
-        let gain = this.context.createGain();
-        gain.gain.value = 0.2;
-        this.oscillator.connect(gain);
-        gain.connect(this.context.destination);
-    }
-
-    /**
-     * 
-     * @param {Array<number>} elements 
-     * @param {Array<number>} positions 
-     * @param {string} type 
-     */
-    emitSound(elements, positions, type) {
-        this.oscillator.type = type;
-        positions.forEach(pos =>
-            this.oscillator.frequency.value = (elements[pos] / this.maxValue) * this.soundFactor
-        );
-    }
-
-    /**
-     * 
-     * @param {SortEvent} event
-     */
-    notify(event) {
-        switch (event.type) {
-            case EventType.START:
-                this.oscillator.start(0);
-                break;
-            case EventType.ENDED:
-                this.oscillator.stop();
-                if (this.context.close) { // MS has not context.close
-                    this.context.close();
-                }
-                break;
-                // "sine", "square", "sawtooth", "triangle"
-            case EventType.COMPARSION:
-                this.emitSound(event.elements, event.positions, "sine");
-                break;
-            case EventType.SET:
-                this.emitSound(event.elements, event.positions, "square");
-                break;
-            case EventType.SWAP:
-                this.emitSound(event.elements, event.positions, "sawtooth");
-                break;
-        }
-    }
-
-}
-
-
-const TipoSequencia = {
-    RANDOM: "Random",
-    SINGLE: "Único",
-    CRESCENT: "Crescente",
-    DECRESCENT: "Decrescente",
-    FOUR_VALUES: "4 valores",
-    SEMI_SORTED: "Semi Ordenado"
-}
-
-/**
- * 
- * @param {number} max 
- * @param {TipoSequencia} tipo 
- * @returns {Array<number>}
- */
-function gerarSequencia(max, tipo) {
-
-    /**
-     * Fonte: https://stackoverflow.com/a/12646864/1659543
-     * 
-     * @param {Array<number>} array
-     */
-    function shuffleArray(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
-        }
-
-        return array;
-    }
-
-    /**
-     * 
-     * @param {*} max 
-     * @returns {Array<number>}
-     */
-    function gerarRange() {
-        let valores = [];
-        for (var i = 0; i < max; i++) {
-            valores.push(i);
-        }
-        return valores;
-    }
-
-    function gerarSequenciaDe4() {
-        let delta = max / 4;
-        let getValor = (pos) => Math.floor(delta * (pos + Math.random()));
-
-        let array = new Array(max);
-        array.fill(getValor(0), 0, delta);
-        array.fill(getValor(1), delta, 2 * delta);
-        array.fill(getValor(2), 2 * delta, 3 * delta);
-        array.fill(getValor(3), 3 * delta);
-
-        return array;
-    }
-
-    function gerarSemiOrdenado() {
-        let valores = [];
-        const randomFactor = 0.05;
-        let signal = () => (Math.random() > 0.5 ? +1 : -1);
-        let factor = () => (signal() * randomFactor * max);
-        let gerador = (i) => Math.max(Math.min(Math.floor(i + factor()), max), 0);
-
-        for (var i = 0; i < max; i++) {
-            valores.push(gerador(i));
-        }
-        return valores;
-    }
-
-    console.log(max, tipo);
-    switch (tipo) {
-        case TipoSequencia.RANDOM:
-            return shuffleArray(gerarRange());
-        case TipoSequencia.CRESCENT:
-            return gerarRange();
-        case TipoSequencia.DECRESCENT:
-            return gerarRange().reverse();
-        case TipoSequencia.SINGLE:
-            return Array(max).fill(Math.floor(max / 2));
-        case TipoSequencia.FOUR_VALUES:
-            return shuffleArray(gerarSequenciaDe4());
-        case TipoSequencia.SEMI_SORTED:
-            return gerarSemiOrdenado();
     }
 
 }

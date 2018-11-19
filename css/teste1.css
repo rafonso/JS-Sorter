@@ -28,8 +28,10 @@ input.numerico {
 }
 
 #numeros div {
+    /*
     padding-left: 5px;
     padding-right: 5px;
+    */
     display: table-cell;
     font-family: monospace;
     text-align: right;
