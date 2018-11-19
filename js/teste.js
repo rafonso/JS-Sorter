@@ -29,6 +29,7 @@ class ComponentsController {
         });
 
         this.btnAtivarSom = $("#ativarSom");
+        this.btnAtivarConsole = $("#ativarConsole");
 
         let self = this;
         this.btnGerarNumeros = $("#btnGerarNumeros").click(() => self.gerarValores());
@@ -66,8 +67,10 @@ class ComponentsController {
             this.contador,
             this,
             this.areaNumeros
-            // new EventLogger()
         ];
+        if (this.btnAtivarConsole.is(":checked")) {
+            listeners.push(new EventLogger());
+        }
         if (this.btnAtivarSom.is(":checked")) {
             listeners.push(new Sounder(this.valores.length));
         }
@@ -171,7 +174,13 @@ class EventLogger {
      * @param {SortEvent} event
      */
     notify(event) {
-        console.log(event);
+        let saida = `${event.type}`;
+        if(event.positions.length > 0) {
+            saida += ` (${event.positions})`
+        }
+        saida += ` : ${event.elements}`;
+
+        console.log(saida);
     }
 
 }
