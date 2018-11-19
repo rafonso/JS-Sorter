@@ -7,6 +7,17 @@ class Counter {
         this.comparsions = 0;
         this.startDate = null;
         this.totalTime = null;
+
+        this.acoes = new Map([
+            [EventType.START, () => this.startDate = new Date()],
+            [EventType.ENDED, () => {
+                this.totalTime = this.currentTime;
+                console.log(`Comparações: ${this.comparsions}, Trocas: ${this.swaps}, Tempo: ${this.totalTime} ms`);
+            }],
+            [EventType.COMPARSION, () => this.comparsions++],
+            [EventType.SET, () => this.swaps++],
+            [EventType.SWAP, () => this.swaps++]
+        ]);
     }
 
     /**
@@ -14,23 +25,7 @@ class Counter {
      * @param {SortEvent} event
      */
     notify(event) {
-        switch (event.type) {
-            case EventType.START:
-                this.startDate = new Date();
-                break;
-            case EventType.ENDED:
-                this.totalTime = (new Date()).getTime() - this.startDate.getTime();
-
-                console.log(`Comparações: ${this.comparsions}, Trocas: ${this.swaps}, Tempo: ${this.totalTime} ms`);
-                break;
-            case EventType.COMPARSION:
-                this.comparsions++;
-                break;
-            case EventType.SWAP:
-            case EventType.SET:
-                this.swaps++;
-                break;
-        }
+        this.acoes.get(event.type)();
     }
 
     get currentTime() {
