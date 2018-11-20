@@ -12,6 +12,7 @@ class ComponentsController {
         this.valores = [];
         this.cores = [];
         this.areaNumeros = new AreaNumeros(new SortEvent(SortEvent.IDLE, this.valores), this.cores);
+        this.geradorSequencia = new GeradorSequencia();
 
         this.areaControles = $("#controles");
 
@@ -45,7 +46,7 @@ class ComponentsController {
     }
 
     gerarValores() {
-        this.valores = gerarSequencia(parseInt(this.selQuantidade.val()), this.selSequencia.val());
+        this.valores = this.geradorSequencia.gerar(parseInt(this.selQuantidade.val()), this.selSequencia.val());
         this.cores = [];
         this.valores.forEach((i) => {
             this.cores[i] = toRgb(i, i => i / this.valores.length)
