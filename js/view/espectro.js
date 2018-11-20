@@ -2,6 +2,7 @@
 
 class Espectro {
 
+
     /**
      * 
      * @param {SortEvent} eventoInicial
@@ -12,30 +13,44 @@ class Espectro {
         this.espectro = $("#espectro");
         this.cores = cores;
 
-        this.fillArea(eventoInicial);
-    }
-
-    /**
-     * 
-     * @param {SortEvent} evento 
-     */
-    fillArea(evento) {
-        let width = 100.0 / evento.elements.length;
+        let width = 100.0 / eventoInicial.elements.length;
         let elementos =
-            evento.elements.map(i =>
-                $(`<div></div>`)
-                .prop("title", i)
-                .css("width", `${width}%`)
-                // (evento.elements.length > 100)? '': 
-                .css("background-color", this.cores[i])
-                .prop("class", evento.positions.includes(i) ? evento.type : "")
+            eventoInicial.elements.map((value, i) =>
+                this.fillElemento(
+                    $(`<div></div>`)
+                    .prop("id", i)
+                    .css("width", `${width}%`), value)
             );
 
         this.espectro.html(elementos);
     }
 
+    /**
+     * 
+     * @param {JQuery} div 
+     * @param {number} value 
+     */
+    fillElemento(div, value) {
+        return div
+            .prop("title", value)
+            .css("background-color", this.cores[value]);
+    }
+
+    /**
+     * 
+     * @param {SortEvent} event
+     */
     notify(event) {
-        this.fillArea(event);
+        this.espectro.children()
+            .removeClass(`${EventType.COMPARSION} ${EventType.ENDED} ${EventType.IDLE} ${EventType.SET} ${EventType.START} ${EventType.SWAP}`);
+
+        event.positions.forEach((i) =>
+            this.fillElemento(
+                this.espectro
+                .children(`div:nth-child(${i + 1})`)
+                .prop("class", event.type), event.elements[i])
+        );
+
     }
 
 }
