@@ -23,11 +23,11 @@ input.numerico {
     color: #fff;
 }
 
-#numeros {
+#espectro {
     display: flex;
 }
 
-#numeros div {
+#espectro div {
     /*
     padding-left: 5px;
     padding-right: 5px;
@@ -41,13 +41,13 @@ input.numerico {
     height: 15px;
 }
 
-#numeros div.comparsion {
+#espectro div.comparsion {
     border-color: black;
     border-style: dotted;
 }
 
-#numeros div.swap,
-#numeros div.set {
+#espectro div.swap,
+#espectro div.set {
     border-color: black;
     border-style: dashed;
 }

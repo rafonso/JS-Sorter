@@ -11,7 +11,7 @@ class ComponentsController {
     constructor() {
         this.valores = [];
         this.cores = [];
-        this.areaNumeros = new AreaNumeros(new SortEvent(SortEvent.IDLE, this.valores), this.cores);
+        this.espectro = new Espectro(new SortEvent(SortEvent.IDLE, this.valores), this.cores);
         this.geradorSequencia = new GeradorSequencia();
 
         this.areaControles = $("#controles");
@@ -53,7 +53,7 @@ class ComponentsController {
         });
 
 
-        this.areaNumeros = new AreaNumeros(new SortEvent(SortEvent.IDLE, this.valores), this.cores);
+        this.espectro = new Espectro(new SortEvent(SortEvent.IDLE, this.valores), this.cores);
         this.btnOrdenar.prop("disabled", (!!this.selTipo.val()) ? null : "disabled");
         this.txtComparacoes.val(null);
         this.txtTrocas.val(null);
@@ -68,7 +68,7 @@ class ComponentsController {
         let listeners = [
             this.contador,
             this,
-            this.areaNumeros
+            this.espectro
         ];
         if (this.btnAtivarConsole.is(":checked")) {
             listeners.push(new EventLogger());
@@ -110,45 +110,6 @@ class ComponentsController {
 }
 
 
-
-class AreaNumeros {
-
-    /**
-     * 
-     * @param {SortEvent} eventoInicial
-     * @param {Array<string>} cores 
-     */
-    constructor(eventoInicial, cores) {
-        this.campoNumeros = $("#numeros");
-        this.cores = cores;
-
-        this.fillArea(eventoInicial);
-    }
-
-    /**
-     * 
-     * @param {SortEvent} evento 
-     */
-    fillArea(evento) {
-        let width = 100.0 / evento.elements.length;
-        let elementos =
-            evento.elements.map(i =>
-                $(`<div></div>`)
-                .prop("title", i)
-                .css("width", `${width}%`)
-                // (evento.elements.length > 100)? '': 
-                .css("background-color", this.cores[i])
-                .prop("class", evento.positions.includes(i) ? evento.type : "")
-            );
-
-        this.campoNumeros.html(elementos);
-    }
-
-    notify(event) {
-        this.fillArea(event);
-    }
-
-}
 
 
 class EventLogger {
