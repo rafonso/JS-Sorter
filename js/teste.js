@@ -13,6 +13,7 @@ class ComponentsController {
         this.cores = [];
         this.espectro = new Espectro(new SortEvent(SortEvent.IDLE, this.valores), this.cores);
         this.geradorSequencia = new GeradorSequencia();
+        this.dadosForamOrdenados = false;
 
         this.areaControles = $("#controles");
 
@@ -37,7 +38,7 @@ class ComponentsController {
         this.btnGerarNumeros = $("#btnGerarNumeros").click(() => self.gerarValores());
         this.btnOrdenar = $("#btnOrdenar").prop("disabled", "disabled").click(() => self.iniciarOrdenacao());
         this.selTipo.change(function () {
-            self.btnOrdenar.prop("disabled", (!!self.valores && !!self.selTipo.val()) ? null : "disabled");
+            self.btnOrdenar.prop("disabled", (!!self.valores && !!self.selTipo.val() && !self.dadosForamOrdenados) ? null : "disabled");
         });
 
         this.txtComparacoes = $("#comparacoes");
@@ -51,6 +52,7 @@ class ComponentsController {
         this.valores.forEach((i) => {
             this.cores[i] = toRgb(i, i => i / this.valores.length)
         });
+        this.dadosForamOrdenados = false;
 
 
         this.espectro = new Espectro(new SortEvent(SortEvent.IDLE, this.valores), this.cores);
@@ -100,6 +102,7 @@ class ComponentsController {
             this.txtComparacoes.val(this.contador.comparsions);
             this.txtTrocas.val(this.contador.swaps);
             this.txtTempo.val(`${this.contador.totalTime} ms`);
+            this.dadosForamOrdenados = true;
         } else {
             this.txtComparacoes.val(this.contador.comparsions);
             this.txtTrocas.val(this.contador.swaps);
