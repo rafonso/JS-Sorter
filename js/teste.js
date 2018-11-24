@@ -49,11 +49,8 @@ class ComponentsController {
     gerarValores() {
         this.valores = this.geradorSequencia.gerar(parseInt(this.selQuantidade.val()), this.selSequencia.val());
         this.cores = [];
-        this.valores.forEach((i) => {
-            this.cores[i] = toRgb(i, i => i / this.valores.length)
-        });
+        this.valores.forEach((i) => this.cores[i] = toRgb(i, i => i / this.valores.length));
         this.dadosForamOrdenados = false;
-
 
         this.espectro = new Espectro(new SortEvent(SortEvent.IDLE, this.valores), this.cores);
         this.btnOrdenar.prop("disabled", (!!this.selTipo.val()) ? null : "disabled");
@@ -63,11 +60,8 @@ class ComponentsController {
     }
 
     iniciarOrdenacao() {
-        let worker = new Worker('./js/testeWorker.js');
-
         this.contador = new Counter();
-
-        let listeners = [
+         let listeners = [
             this.contador,
             this,
             this.espectro
@@ -79,9 +73,9 @@ class ComponentsController {
             listeners.push(new Sounder(this.valores.length));
         }
 
-        worker.addEventListener("message", (e) => listeners.forEach(l => l.notify(e.data)));
-
-        worker.postMessage({
+        this.worker = new Worker('js/testeWorker.js');
+        this.worker.addEventListener("message", (e) => listeners.forEach(l => l.notify(e.data)));
+        this.worker.postMessage({
             "valores": this.valores,
             "sorter": this.selTipo.val(),
             "pauseTime": Number.parseInt(this.selIntervalo.val())
@@ -103,6 +97,8 @@ class ComponentsController {
             this.txtTrocas.val(this.contador.swaps);
             this.txtTempo.val(`${this.contador.totalTime} ms`);
             this.dadosForamOrdenados = true;
+            // Evite que instâncias de webworker se acumulem na memória após o final de cada ordenação.
+            this.worker.terminate();
         } else {
             this.txtComparacoes.val(this.contador.comparsions);
             this.txtTrocas.val(this.contador.swaps);
