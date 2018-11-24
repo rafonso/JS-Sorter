@@ -34,13 +34,16 @@ class SortEvent {
 }
 
 const sorterType = new Map([
-    ['Bubble'   , (pauseTime) => new BubbleSorter    (pauseTime)],
-    ['Cocktail' , (pauseTime) => new CocktailSorter  (pauseTime)],
-    ['Selection', (pauseTime) => new SelectionSorter (pauseTime)],
-    ['Insertion', (pauseTime) => new InsertionSorter (pauseTime)],
-    ['Heap'     , (pauseTime) => new HeapSorter      (pauseTime)],
-    ['Shell'    , (pauseTime) => new ShellSorter     (pauseTime)],
-    ['Comb'     , (pauseTime) => new CombSorter      (pauseTime)],
-    ['Merge'    , (pauseTime) => new MergeSorter     (pauseTime)],
-    ['Quick'    , (pauseTime) => new QuickSorter     (pauseTime)]
+    ['Bubble'           , (pauseTime) => new BubbleSorter     (pauseTime)],
+    ['Cocktail'         , (pauseTime) => new CocktailSorter   (pauseTime)],
+    ['Selection'        , (pauseTime) => new SelectionSorter  (pauseTime)],
+    ['Insertion'        , (pauseTime) => new InsertionSorter  (pauseTime)],
+    ['Heap'             , (pauseTime) => new HeapSorter       (pauseTime)],
+    ['Shell'            , (pauseTime) => new ShellSorter      (pauseTime)],
+    ['Comb'             , (pauseTime) => new CombSorter       (pauseTime)],
+    ['Merge Iterative'  , (pauseTime) => new MergeSorter      (pauseTime)],
+    ['Merge Recursive'  , (pauseTime) => new MergeRecursiveSorter(pauseTime)],
+    // ['Merge + Insertion', (pauseTime) => new MergeInsertionSorter(pauseTime)],
+    ['Quick'            , (pauseTime) => new QuickSorter      (pauseTime)],
+    // ['Quick + Insertion', (pauseTime) => new QuickInsertSorter(pauseTime)],
 ]);

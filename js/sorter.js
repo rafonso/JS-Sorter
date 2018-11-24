@@ -237,58 +237,117 @@ class MergeSorter extends Sorter {
      */
     process(arr) {
         if (arr.length < 2) {
-            return arr;
+            return;
         }
 
-        this.mergesort_i(arr);
-    }
-
-    /**
-     * 
-     * @param {Array<number>} v
-     */
-    mergesort_i(v) {
-        let b = 1;
-        while (b < v.length) {
-            let p = 0;
-            while (p + b < v.length) {
-                let r = p + 2 * b;
-                if (r > v.length) r = v.length;
-                this.intercala2(p, p + b, r, v);
-                p = p + 2 * b;
+        let start = 1;
+        while (start < arr.length) {
+            let left = 0;
+            while (left + start < arr.length) {
+                let right = left + 2 * start;
+                if (right > arr.length) right = arr.length;
+                let mid = left + start;
+                this.intercala2(arr, left, mid, right);
+                left = left + 2 * start;
             }
-            b = 2 * b;
+            start = 2 * start;
         }
     }
 
     /**
      * 
-     * @param {number} p 
-     * @param {number} q 
-     * @param {number} r 
-     * @param {Array<number>} v 
+     * @param {Array<number>} arr 
+     * @param {number} left 
+     * @param {number} mid 
+     * @param {number} right 
      */
-    intercala2(p, q, r, v) {
+    intercala2(arr, left, mid, right) {
         let i, j;
-        let w = new Array(r - p);
+        let temp = new Array(right - left);
 
-        for (i = p; i < q; ++i) {
-            w[i - p] = v[i];
+        for (i = left; i < mid; ++i) {
+            temp[i - left] = arr[i];
         }
-        for (j = q; j < r; ++j) {
-            w[r - p + q - j - 1] = v[j];
+        for (j = mid; j < right; ++j) {
+            temp[temp.length - 1 + mid - j] = arr[j];
         }
 
         i = 0;
-        j = r - p - 1;
-        for (let k = p; k < r; ++k) {
-            if (w[i] <= w[j]) {
-                super.setValue(v, k, w[i++]);
+        j = temp.length - 1;
+        for (let k = left; k < right; ++k) {
+            if (temp[i] <= temp[j]) {
+                super.setValue(arr, k, temp[i++]);
             } else {
-                super.setValue(v, k, w[j--]);
+                super.setValue(arr, k, temp[j--]);
             }
         }
     }
+}
+
+/**
+ * Source: http://andreinc.net/2010/12/22/the-merge-sort-algorithm-implementation-in-java/
+ */
+class MergeRecursiveSorter extends Sorter {
+
+    /**
+     * 
+     * @param {number} pauseTime tempo de pausa entre cada evento.
+     */
+    constructor(pauseTime) {
+        super(pauseTime);
+    }
+
+    /**
+     * 
+     * @param {Array<number>} arr 
+     */
+    process(arr) {
+        this.mergeSort(arr, 0, arr.length - 1);
+    }
+
+    /* Recursive function used by the sort function */
+    mergeSort(arr, begin, end) {
+        if (begin < end) {
+            let mid = Math.floor((begin + end) / 2);
+
+            this.mergeSort(arr, begin, mid);
+            this.mergeSort(arr, mid + 1, end);
+            this.merge(arr, begin, mid, end);
+        }
+    }
+
+    merge(arr, begin, mid, end) {
+        /* Additional Helper Arrays */
+        let larraySize = mid - begin + 1;
+        let rarraySize = end - mid;
+        let larray = new Array(larraySize + 1);
+        let rarray = new Array(rarraySize + 1);
+
+        /* Sentinel values, to avoid additional checks
+        when we are merging larray and rarray */
+        larray[larraySize] = Number.MAX_SAFE_INTEGER;
+        rarray[rarraySize] = Number.MAX_SAFE_INTEGER;
+
+        for (let i = 0; i < larraySize; ++i) {
+            larray[i] = arr[begin + i];
+        }
+        for (let i = 0; i < rarraySize; ++i) {
+            rarray[i] = arr[i + mid + 1];
+        }
+
+        /* Building the resulting arr from the previously
+        sorted sequences */
+        for (let m = 0, n = 0, k = begin; k <= end; ++k) {
+            if (larray[m] <= rarray[n]) {
+                super.setValue(arr, k, larray[m]);
+                m++;
+            } else {
+                super.setValue(arr, k, rarray[n]);
+                n++;
+            }
+        }
+    }
+
 }
 
 /**
@@ -524,4 +583,172 @@ class CocktailSorter extends Sorter {
             left++;
         }
     }
+}
+
+/**
+ * Source: https://megocode3.wordpress.com/2008/01/28/8/
+ */
+class QuickInsertSorter extends Sorter {
+
+    /**
+     * 
+     * @param {number} pauseTime tempo de pausa entre cada evento.
+     */
+    constructor(pauseTime) {
+        super(pauseTime);
+    }
+
+    /**
+     * 
+     * @param {Array<number>} arr 
+     */
+    process(arr) {
+        this.quickSort(arr, 0, arr.length - 1);
+    }
+
+    /**
+     * 
+     * @param {Array<number>} elements 
+     */
+    executeInsert(arr, left, right) {
+        for (let i = left + 1; i < right; i++) {
+            let el = arr[i];
+            let j = i;
+
+            while (j > 0 && !super.isLesserThanValue(arr, j - 1, el)) {
+                super.setValue(arr, j, arr[j - 1]);
+                j--;
+            }
+
+            super.setValue(arr, j, el);
+        }
+    }
+
+    /**
+     * 
+     * @param {Array<number>} arr 
+     * @param {number} left 
+     * @param {number} right 
+     */
+    quickSort(arr, left, right) {
+        if (right - left < 9) {
+            this.executeInsert(arr, left, right + 1);
+        } else if (left < right) {
+            let pivot = right;
+            let partitionIndex = this.partition(arr, pivot, left, right);
+
+            //sort left and right
+            this.quickSort(arr, left, partitionIndex - 1);
+            this.quickSort(arr, partitionIndex + 1, right);
+        }
+
+        return arr;
+    }
+
+    /**
+     * 
+     * @param {Array<number>} arr 
+     * @param {number} pivot 
+     * @param {number} left 
+     * @param {number} right 
+     */
+    partition(arr, pivot, left, right) {
+        let pivotValue = arr[pivot],
+            partitionIndex = left;
+
+        for (let i = left; i < right; i++) {
+            if (super.isLesserThanValue(arr, i, pivotValue)) {
+                super.swap(arr, i, partitionIndex);
+                partitionIndex++;
+            }
+        }
+        super.swap(arr, right, partitionIndex);
+
+        return partitionIndex;
+    }
+
+}
+
+
+class MergeInsertionSorter extends Sorter {
+
+    /**
+     * 
+     * @param {number} pauseTime tempo de pausa entre cada evento.
+     */
+    constructor(pauseTime) {
+        super(pauseTime);
+    }
+
+    /**
+     * 
+     * @param {Array<number>} arr 
+     */
+    process(arr) {
+        this.mergeSort(arr, 0, arr.length - 1);
+    }
+
+
+    /* Recursive function used by the sort function */
+    mergeSort(arr, begin, end) {
+        if (begin < end) {
+            if (end - begin > 10) {
+                let mid = Math.floor((begin + end) / 2);
+
+                this.mergeSort(arr, begin  , mid);
+                this.mergeSort(arr, mid + 1, end);
+                this.merge(arr, begin, mid, end);
+            } else {
+                this.insertSort(arr, begin, end + 1);
+            }
+        }
+    }
+
+    insertSort(arr, begin, end) {
+        for (let i = begin + 1; i < end; i++) {
+            let el = arr[i];
+            let j = i;
+
+            while (j > begin && !super.isLesserThanValue(arr, j - 1, el)) {
+                super.setValue(arr, j, arr[j - 1]);
+                j--;
+            }
+
+            super.setValue(arr, j, el);
+        }
+    }
+
+
+    merge(arr, begin, mid, end) {
+        /* Additional Helper Arrays */
+        let larraySize = mid - begin + 1;
+        let rarraySize = end - mid;
+        let larray = new Array(larraySize + 1);
+        let rarray = new Array(rarraySize + 1);
+
+        /* Sentinel values, to avoid additional checks
+        when we are merging larray and rarray */
+        larray[larraySize] = Number.MAX_SAFE_INTEGER;
+        rarray[rarraySize] = Number.MAX_SAFE_INTEGER;
+
+        for (let i = 0; i < larraySize; ++i) {
+            larray[i] = arr[begin + i];
+        }
+        for (let i = 0; i < rarraySize; ++i) {
+            rarray[i] = arr[i + mid + 1];
+        }
+
+        /* Building the resulting arr from the previously
+        sorted sequences */
+        for (let p = begin, m = 0, n = 0, k = begin; k <= end; ++k) {
+            if (larray[m] <= rarray[n]) {
+                super.setValue(arr, k, larray[m]);
+                m++;
+            } else {
+                super.setValue(arr, k, rarray[n]);
+                n++;
+            }
+        }
+    }
+
 }
