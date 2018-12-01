@@ -18,6 +18,7 @@ class ComponentsController {
         this.areaControles = $("#controles");
 
         this.selQuantidade = $("#quantidade");
+        this.selExibicao = $("#exibicao");
         this.selTipo = $("#tipo").html(
             "<option></option> " +
             Array.from(sorterType.keys()).map(type => `<option>${type}</option> `)
@@ -52,7 +53,9 @@ class ComponentsController {
         this.valores.forEach((i) => this.cores[i] = toRgb(i, i => i / this.valores.length));
         this.dadosForamOrdenados = false;
 
-        this.espectro = new Espectro(new SortEvent(SortEvent.IDLE, this.valores), this.cores);
+        let initialEvent = new SortEvent(SortEvent.IDLE, this.valores);
+        this.espectro = new Espectro(initialEvent, this.cores);
+        this.canvasPontos = new CanvasPontos(initialEvent, this.cores);
         this.btnOrdenar.prop("disabled", (!!this.selTipo.val()) ? null : "disabled");
         this.txtComparacoes.val(null);
         this.txtTrocas.val(null);
@@ -61,10 +64,11 @@ class ComponentsController {
 
     iniciarOrdenacao() {
         this.contador = new Counter();
-         let listeners = [
+        let listeners = [
             this.contador,
             this,
-            this.espectro
+            this.espectro,
+            this.canvasPontos
         ];
         if (this.btnAtivarConsole.is(":checked")) {
             listeners.push(new EventLogger());
@@ -97,7 +101,7 @@ class ComponentsController {
             this.txtTrocas.val(this.contador.swaps);
             this.txtTempo.val(`${this.contador.totalTime} ms`);
             this.dadosForamOrdenados = true;
-            // Evite que instâncias de webworker se acumulem na memória após o final de cada ordenação.
+            /* Evita que instâncias de webworker se acumulem na memória após o final de cada ordenação. */
             this.worker.terminate();
         } else {
             this.txtComparacoes.val(this.contador.comparsions);
@@ -108,9 +112,9 @@ class ComponentsController {
 
 }
 
-
-
-
+/**
+ * 
+ */
 class EventLogger {
 
     /**

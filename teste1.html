@@ -5,7 +5,17 @@
   <title>Teste</title>
   <meta charset="utf-8" />
   <link rel="stylesheet" type="text/css" href="./css/teste1.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
+  <link rel="stylesheet" type="text/css" href="./js/view/jquery.svg/jquery.svg.css"> 
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/object-observe/0.2.6/object-observe.js"></script>  
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
+
+  <script type="text/javascript" src="./js/view/jquery.svg/jquery.svg.js"></script>
+  <script type="text/javascript" src="./js/view/jquery.svg/jquery.svgdom.js"></script>
+  <script type="text/javascript" src="./js/view/jquery.svg/jquery.svgplot.js"></script>
+  <script type="text/javascript" src="./js/view/jquery.svg/jquery.svggraph.js"></script>
+  <script type="text/javascript" src="./js/view/widgets.js"></script>
+
   <script src="./js/teste.js"></script>
   <script src="./js/geradorSequencia.js"></script>
   <script src="./js/element.js"></script>
@@ -14,6 +24,7 @@
   <script src="./js/view/sounder.js"></script>
   <script src="./js/view/colors.js"></script>
   <script src="./js/view/espectro.js"></script>
+  <script src="./js/view/pontos.js"></script>
 </head>
 
 <body>
@@ -43,8 +54,11 @@
     <!-- LINHA 2 - INÍCIO -->
     <button id="btnGerarNumeros">Gerar Números</button>
     <div></div>
-    <div></div>
-    <div></div>
+    <label for="exibicao">Tipo de Exibição:</label>
+    <select id="exibicao">
+      <option>Espectro</option>
+      <option>Pontos</option>
+    </select>
     <div>
       <input id="ativarSom" type="checkbox" checked="checked">
       <label for="ativarSom">Ativar som</label>
@@ -86,6 +100,8 @@
   <br />
   <br />
   <div id="espectro"></div>
+  <div id="pontos" style="width: 100%; height: 400px;">
+  </div>
   <br />
   <br />
 

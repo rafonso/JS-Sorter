@@ -41,13 +41,16 @@ input.numerico {
     height: 15px;
 }
 
-#espectro div.comparsion {
+#espectro div.comparsion,
+#pontos .ponto.comparsion {
     border-color: black;
     border-style: dotted;
 }
 
 #espectro div.swap,
-#espectro div.set {
+#espectro div.set,
+#pontos .ponto.swap,
+#pontos .ponto.set {
     border-color: black;
     border-style: dashed;
 }

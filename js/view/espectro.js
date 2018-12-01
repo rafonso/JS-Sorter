@@ -2,7 +2,6 @@
 
 class Espectro {
 
-
     /**
      * 
      * @param {SortEvent} eventoInicial
