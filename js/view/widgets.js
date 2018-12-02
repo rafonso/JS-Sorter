@@ -44,7 +44,7 @@ $.extend($.svg._extensions[0][1].prototype, {
 	/**
 	 * @function Converts a x cartesian position to a equivalent x chart position.
 	 * 
-	 * @param x {Number} x cartesian position
+	 * @param xChart {Number} x cartesian position
 	 * @returns {Number} the equivalent x chart position.
 	 */
 	chartToX: function (xChart) {
@@ -53,27 +53,23 @@ $.extend($.svg._extensions[0][1].prototype, {
 	/**
 	 * @function Converts a y cartesian position to a equivalent y chart position.
 	 * 
-	 * @param y {Number} y cartesian position
+	 * @param yChart {Number} y cartesian position
 	 * @returns {Number} the equivalent y chart position.
 	 */
 	chartToY: function (yChart) {
 		return (this._getDims()[this.H] + this._getDims()[this.Y] - yChart) / this._getScales()[1] + this.yAxis._scale.min;
 	},
 	/**
-	 * Bind a event to the plot.
+	 *  @function Bind a event to the plot.
 	 * 
 	 * @param {string} eventType - A string containing one or more DOM event types, such as "click" or "submit," or custom event names.
 	 * @param {any} eventData - object containing data that will be passed to the event handler.
 	 * @param {eventHandler} handler - A function to execute each time the event is triggered.
-	 * @see http://api.jquery.com/bind/ Jquery´s bind()
+	 * @returns 
+	 * @see {@link http://api.jquery.com/bind/ Jquery´s} bind()
 	 */
 	bind: function (eventType, eventData, handler) {
 		$(this._wrapper._container).bind(eventType, eventData, handler);
 		return this;
 	}
-	/**
-	 * @callback eventHandler 
-	 * @param {Event} A Jquery Event Object
-	 * @see {@link http://api.jquery.com/Types/#Event}
-	 */
 });

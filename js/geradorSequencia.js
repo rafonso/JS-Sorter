@@ -1,5 +1,7 @@
 "use strict";
-
+/**
+ * @enum {string}
+ */
 const TipoSequencia = {
     RANDOM      : "Random"      ,
     SINGLE      : "Único"       ,
@@ -84,7 +86,7 @@ function gerarSemiOrdenado(max) {
 /**
  * 
  * @param {number} max Tamanho do array e valor máximo 
- * @returns {Array<number>} array com tamanho igual a max com um únicoi valor de 0 a max.
+ * @returns {Array<number>} array com tamanho igual a max com um único valor de 0 a max.
  */
 function getValorUnico(max) {
     return Math.floor(max * (1 + randomSignal() * Math.random() / 2) / 2);

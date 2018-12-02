@@ -2,6 +2,10 @@
 
 class Sounder {
 
+    /**
+     * @constructor
+     * @param {number} maxValue 
+     */
     constructor(maxValue) {
         this.maxValue = maxValue;
         this.soundFactor = 5000.0;
@@ -16,12 +20,12 @@ class Sounder {
     }
 
     /**
-     * 
+     * @private
      * @param {Array<number>} elements 
      * @param {Array<number>} positions 
      * @param {string} type 
      */
-    emitSound(elements, positions, type) {
+    _emitSound(elements, positions, type) {
         this.oscillator.type = type;
         positions.forEach(pos =>
             this.oscillator.frequency.value = (elements[pos] / this.maxValue) * this.soundFactor
@@ -45,13 +49,13 @@ class Sounder {
                 break;
                 // "sine", "square", "sawtooth", "triangle"
             case EventType.COMPARSION:
-                this.emitSound(event.elements, event.positions, "sine");
+                this._emitSound(event.elements, event.positions, "sine");
                 break;
             case EventType.SET:
-                this.emitSound(event.elements, event.positions, "square");
+                this._emitSound(event.elements, event.positions, "square");
                 break;
             case EventType.SWAP:
-                this.emitSound(event.elements, event.positions, "sawtooth");
+                this._emitSound(event.elements, event.positions, "sawtooth");
                 break;
         }
     }

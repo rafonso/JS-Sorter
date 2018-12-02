@@ -1,5 +1,7 @@
 "use strict";
-
+/**
+ * 
+ */
 let linear = {
     r: (x) => {
         if (x < 0.2)
@@ -30,11 +32,17 @@ let linear = {
     }
 };
 
+/**
+ * 
+ * @param {number} x 
+ * @param {Function} normalizador 
+ * @returns {string} Identificação do cor no formato #RRGGBB
+ */
 function toRgb(x, normalizador = (x) => x) {
     let valor = normalizador(x);
     // Fonte https://gist.github.com/agirorn/0e740d012b620968225de58859ccef5c
-    let numToHex = (dec) => (dec + 0x100).toString(16).substr(-2).toUpperCase();
-    let xToColor = (color) => numToHex(Math.floor(255 * linear[color](valor)));
+    let numToHex = ( /** {number} */ dec) => (dec + 0x100).toString(16).substr(-2).toUpperCase();
+    let xToColor = ( /** {string} */color) => numToHex(Math.floor(255 * linear[color](valor)));
 
     return `#${xToColor("r")}${xToColor("g")}${xToColor("b")}`;
 }

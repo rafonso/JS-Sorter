@@ -3,7 +3,7 @@
 class Espectro {
 
     /**
-     * 
+     * @constructor
      * @param {SortEvent} eventoInicial
      * @param {Array<string>} cores 
      */
@@ -15,7 +15,7 @@ class Espectro {
         let width = 100.0 / eventoInicial.elements.length;
         let elementos =
             eventoInicial.elements.map((value, i) =>
-                this.fillElemento(
+                this._fillElemento(
                     $(`<div></div>`)
                     .prop("id", i)
                     .css("width", `${width}%`), value)
@@ -25,11 +25,11 @@ class Espectro {
     }
 
     /**
-     * 
+     * @private
      * @param {JQuery} div 
      * @param {number} value 
      */
-    fillElemento(div, value) {
+    _fillElemento(div, value) {
         return div
             .prop("title", value)
             .css("background-color", this.cores[value]);
@@ -44,7 +44,7 @@ class Espectro {
             .removeClass(`${EventType.COMPARSION} ${EventType.ENDED} ${EventType.IDLE} ${EventType.SET} ${EventType.START} ${EventType.SWAP}`);
 
         event.positions.forEach((i) =>
-            this.fillElemento(
+            this._fillElemento(
                 this.espectro
                 .children(`div:nth-child(${i + 1})`)
                 .prop("class", event.type), event.elements[i])

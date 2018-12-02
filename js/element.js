@@ -2,6 +2,8 @@
 
 /**
  * Tipo de Evento.
+ * @readonly
+ * @enum {string}
  */
 const EventType = {
     IDLE: "idle",

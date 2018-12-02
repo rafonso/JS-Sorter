@@ -3,7 +3,7 @@
 class CanvasPontos {
 
     /**
-     * 
+     * @constructor
      * @param {SortEvent} eventoInicial
      * @param {Array<string>} cores 
      */
@@ -28,6 +28,13 @@ class CanvasPontos {
         );
     }
 
+    /**
+     * @private
+     * @param {number} value valor do ponto
+     * @param {number} i posição do ponto
+     * @param {number} [radius=1] raio do ponto
+     * @param {string} [classe=''] classe CSS do ponto
+     */
     _makePoint(value, i, radius = 1, classe = '') {
         return this.chart.point(
             this.plot.xToChart(i),

@@ -1,5 +1,8 @@
 "use strict";
 
+/**
+ * 
+ */
 class Counter {
 
     constructor() {
