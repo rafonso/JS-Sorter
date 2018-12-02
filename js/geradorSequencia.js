@@ -73,14 +73,14 @@ function gerarSequenciaDe4(max) {
  */
 function gerarSemiOrdenado(max) {
     const randomFactor = 0.05;
-    let factor = () => (randomSignal() * randomFactor * max);
-    let gerador = (i) => Math.max(Math.min(Math.floor(i + factor()), max), 0);
 
-    let valores = new Array(max);
-    for (var i = 0; i < max; i++) {
-        valores[i] = gerador(i);
+    function gerador(i) {
+        let factor = randomSignal() * randomFactor * max * Math.random();
+        let value = Math.floor(i + factor);
+        return Math.max(Math.min(value, max), 0);
     }
-    return valores;
+
+    return gerarRange(max).map(gerador);
 }
 
 /**
