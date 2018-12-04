@@ -24,28 +24,45 @@ class CanvasPontos {
         this.plot.yAxis.scale(-1, eventoInicial.elements.length + 1).title(null).ticks(null, null).end();
         this.plot.redraw();
         this.pontos = eventoInicial.elements.map((value, i) =>
-            this._makePoint(value, i)
+            this._makePoint(value, i, eventoInicial.type)
         );
     }
 
     /**
      * @private
      * @param {number} value valor do ponto
-     * @param {number} i posição do ponto
-     * @param {number} [radius=1] raio do ponto
-     * @param {string} [classe=''] classe CSS do ponto
+     * @param {EventType} tipo tipo de Evento
      */
-    _makePoint(value, i, radius = 1, classe = '') {
+    _raioBordaPorTipoEvento(value, tipoEvento) {
+        switch (tipoEvento) {
+            case EventType.COMPARSION:
+                return [2, 'black'];
+            case EventType.SET:
+            case EventType.SWAP:
+                return [2, 'white'];
+            default:
+                return [1, this.colors[value]];
+        }
+    }
+
+    /**
+     * @private
+     * @param {number} value valor do ponto
+     * @param {number} i posição do ponto
+     * @param {EventType} tipo tipo de Evento
+     */
+    _makePoint(value, i, tipo) {
+        let [raio, borda] = this._raioBordaPorTipoEvento(value, tipo);
         return this.chart.point(
             this.plot.xToChart(i),
             this.plot.yToChart(value),
-            radius, {
-                stroke: this.colors[value],
+            raio, {
+                stroke: borda,
                 fill: this.colors[value],
                 id: i,
                 value: value,
                 title: `[${i},${value}]`,
-                class: `ponto ${classe}`
+                class: `ponto ${tipo}`
             });
     }
 
@@ -54,16 +71,21 @@ class CanvasPontos {
      * @param {SortEvent} event
      */
     notify(event) {
-        this.canvas.find(".ponto").removeClass(`${EventType.COMPARSION} ${EventType.ENDED} ${EventType.IDLE} ${EventType.SET} ${EventType.START} ${EventType.SWAP}`);
-        this.canvas.find(".ponto[r='2']").attr('r', 1);
+        // Limpa os pontos onde ocorreram eventos na iteração anterior.
+        let self = this;
+        this.canvas.find(".ponto[r='2']").attr('r', 1).each(function () {
+            let _this = $(this);
+            _this.attr('stroke', self.colors[_this.attr("value")]);
+        });
+
         if (event.type === EventType.ENDED) {
             event.elements.forEach((value, i) =>
-                this._makePoint(value, i)
+                this._makePoint(value, i, event.type)
             );
         } else {
             event.positions.forEach((i) => {
                 this.canvas.find(`.ponto[id='${i}']`).remove();
-                this._makePoint(event.elements[i], i, 2, event.type);
+                this._makePoint(event.elements[i], i, event.type);
             });
         }
     }
