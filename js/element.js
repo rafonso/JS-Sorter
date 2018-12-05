@@ -48,4 +48,5 @@ const sorterType = new Map([
     // ['Merge + Insertion', (pauseTime) => new MergeInsertionSorter(pauseTime)],
     ['Quick'            , (pauseTime) => new QuickSorter      (pauseTime)],
     // ['Quick + Insertion', (pauseTime) => new QuickInsertSorter(pauseTime)],
+    ['Radix'            , (pauseTime) => new RadixSorter      (pauseTime)],
 ]);

@@ -695,7 +695,7 @@ class MergeInsertionSorter extends Sorter {
             if (end - begin > 10) {
                 let mid = Math.floor((begin + end) / 2);
 
-                this.mergeSort(arr, begin  , mid);
+                this.mergeSort(arr, begin, mid);
                 this.mergeSort(arr, mid + 1, end);
                 this.merge(arr, begin, mid, end);
             } else {
@@ -748,6 +748,86 @@ class MergeInsertionSorter extends Sorter {
                 super.setValue(arr, k, rarray[n]);
                 n++;
             }
+        }
+    }
+
+}
+
+/**
+ * https://en.wikipedia.org/wiki/Radix_sort
+ */
+class RadixSorter extends Sorter {
+
+    /**
+     * 
+     * @param {number} pauseTime tempo de pausa entre cada evento.
+     */
+    constructor(pauseTime) {
+        super(pauseTime);
+    }
+
+    /**
+     * @private
+     * @param {Array<number>} arr 
+     */
+    _getMax(arr) {
+        let posMax = 0;
+        for (let i = 1; i < arr.length; i++) {
+            if (super.isLesser(arr, posMax, i)) {
+                posMax = i;
+            }
+        }
+
+        return arr[posMax];
+    }
+
+    /**
+     * @private
+     * @param {Array<number>} arr 
+     * @param {number} exp 
+     */
+    _countSort(arr, exp) {
+        let n = arr.length;
+        let output = new Array(n); // output array 
+        let count = Array(10).fill(0)
+        let posCount = (i) => Math.floor(arr[i] / exp) % 10;
+
+        // Store count of occurrences in count[] 
+        for (let i = 0; i < n; i++) {
+            count[posCount(i)]++;
+        }
+
+        // Change count[i] so that count[i] now contains 
+        // actual position of this digit in output[] 
+        for (let i = 1; i < 10; i++) {
+            count[i] += count[i - 1];
+        }
+
+        // Build the output array 
+        for (let i = n - 1; i >= 0; i--) {
+            output[count[posCount(i)] - 1] = arr[i];
+            count[posCount(i)]--;
+        }
+
+        // Copy the output array to arr[], so that arr[] now 
+        // contains sorted numbers according to curent digit 
+        for (let i = 0; i < n; i++) {
+            super.setValue(arr, i, output[i]);
+        }
+    }
+
+    /**
+     * 
+     * @param {Array<number>} arr 
+     */
+    process(arr) {
+        let max = this._getMax(arr);
+
+        let exp = 1;
+        while(max > exp) {
+            console.log(arr, max, exp);
+            this._countSort(arr, exp);
+            exp *= 10;
         }
     }
 
