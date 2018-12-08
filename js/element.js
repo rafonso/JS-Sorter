@@ -38,6 +38,7 @@ class SortEvent {
 const sorterType = new Map([
     ['Bubble'           , (pauseTime) => new BubbleSorter     (pauseTime)],
     ['Cocktail'         , (pauseTime) => new CocktailSorter   (pauseTime)],
+    ['Gnome'            , (pauseTime) => new GnomeSorter      (pauseTime)],
     ['Selection'        , (pauseTime) => new SelectionSorter  (pauseTime)],
     ['Insertion'        , (pauseTime) => new InsertionSorter  (pauseTime)],
     ['Heap'             , (pauseTime) => new HeapSorter       (pauseTime)],

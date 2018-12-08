@@ -154,6 +154,42 @@ class BubbleSorter extends Sorter {
 
 }
 
+/*
+ * Source: https://en.wikipedia.org/wiki/Gnome_sort#Optimization
+ */
+class GnomeSorter extends Sorter {
+
+    /**
+     * 
+     * @param {number} pauseTime tempo de pausa entre cada evento.
+     */
+    constructor(pauseTime) {
+        super(pauseTime);
+    }
+
+    /**
+     * 
+     * @param {Array<number>} arr
+     */
+    process(arr) {
+        for (let pos = 1; pos < arr.length; pos++) {
+            this._gnomeSort(arr, pos)
+        }
+    }
+
+    /**
+     * @private
+     * @param {Array<number>} arr 
+     * @param {number} limit 
+     */
+    _gnomeSort(arr, limit) {
+        for (let i = limit; i > 0 && super.isLesser(arr, i, i - 1); i--) {
+            super.swap(arr, i, i - 1);
+        }
+    }
+
+}
+
 /**
  * Source: https://khan4019.github.io/front-end-Interview-Questions/sort.html#selectionSort
  */
@@ -824,7 +860,7 @@ class RadixSorter extends Sorter {
         let max = this._getMax(arr);
 
         let exp = 1;
-        while(max > exp) {
+        while (max > exp) {
             console.log(arr, max, exp);
             this._countSort(arr, exp);
             exp *= 10;
