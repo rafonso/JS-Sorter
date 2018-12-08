@@ -190,6 +190,71 @@ class GnomeSorter extends Sorter {
 
 }
 
+/*
+ * Source: https://rosettacode.org/wiki/Sorting_Algorithms/Circle_Sort#Java
+ */
+class CircleSorter extends Sorter {
+
+    /**
+     * 
+     * @param {number} pauseTime tempo de pausa entre cada evento.
+     */
+    constructor(pauseTime) {
+        super(pauseTime);
+    }
+
+    /**
+     * 
+     * @param {Array<number>} arr
+     */
+    process(arr) {
+        do {
+            //
+        } while (this._circleSort(arr, 0, arr.length - 1, 0) != 0);
+    }
+
+    /**
+     * 
+     * @param {Array<number>} arr 
+     * @param {number} lo 
+     * @param {number} hi 
+     * @param {number} numSwaps 
+     */
+    _circleSort(arr, lo, hi, numSwaps) {
+        let self = this;
+        function execute(left, right) {  
+            if (self.isLesser(arr, right, left)) {
+                self.swap(arr, left, right);
+                numSwaps++;
+            }
+        }
+
+        if (lo === hi) {
+            return numSwaps;
+        }
+
+        let high = hi;
+        let low = lo;
+        let mid = Math.floor((hi - lo) / 2);
+
+        while (lo < hi) {
+            execute(lo, hi);
+            lo++;
+            hi--;
+        }
+
+        if(lo === hi) {
+            execute(lo, hi + 1);
+        }
+
+        numSwaps = this._circleSort(arr, low          , low + mid, numSwaps);
+        numSwaps = this._circleSort(arr, low + mid + 1, high     , numSwaps);
+
+        return numSwaps;
+    }
+
+}
+
 /**
  * Source: https://khan4019.github.io/front-end-Interview-Questions/sort.html#selectionSort
  */

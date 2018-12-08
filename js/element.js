@@ -41,6 +41,7 @@ const sorterType = new Map([
     ['Gnome'            , (pauseTime) => new GnomeSorter      (pauseTime)],
     ['Selection'        , (pauseTime) => new SelectionSorter  (pauseTime)],
     ['Insertion'        , (pauseTime) => new InsertionSorter  (pauseTime)],
+    ['Circle'           , (pauseTime) => new CircleSorter     (pauseTime)],
     ['Heap'             , (pauseTime) => new HeapSorter       (pauseTime)],
     ['Shell'            , (pauseTime) => new ShellSorter      (pauseTime)],
     ['Comb'             , (pauseTime) => new CombSorter       (pauseTime)],
