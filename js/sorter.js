@@ -222,7 +222,8 @@ class CircleSorter extends Sorter {
      */
     _circleSort(arr, lo, hi, numSwaps) {
         let self = this;
-        function execute(left, right) {  
+
+        function execute(left, right) {
             if (self.isLesser(arr, right, left)) {
                 self.swap(arr, left, right);
                 numSwaps++;
@@ -243,12 +244,12 @@ class CircleSorter extends Sorter {
             hi--;
         }
 
-        if(lo === hi) {
+        if (lo === hi) {
             execute(lo, hi + 1);
         }
 
-        numSwaps = this._circleSort(arr, low          , low + mid, numSwaps);
-        numSwaps = this._circleSort(arr, low + mid + 1, high     , numSwaps);
+        numSwaps = this._circleSort(arr, low, low + mid, numSwaps);
+        numSwaps = this._circleSort(arr, low + mid + 1, high, numSwaps);
 
         return numSwaps;
     }
@@ -932,4 +933,68 @@ class RadixSorter extends Sorter {
         }
     }
 
+}
+
+/**
+ * https://en.wikipedia.org/wiki/Pancake_sorting
+ * https://rosettacode.org/wiki/Sorting_algorithms/Pancake_sort#JavaScript
+ */
+class PancakeSorter extends Sorter {
+
+    /**
+     * 
+     * @param {number} pauseTime tempo de pausa entre cada evento.
+     */
+    constructor(pauseTime) {
+        super(pauseTime);
+    }
+
+    /**
+     * Find the index of the largest element not yet sorted
+     * @private
+     * @param {Array<number>} arr 
+     * @param {number} n 
+     * @returns {number} index of the largest element not yet sorted
+     */
+    _findMaxIdx(arr, n) {
+        let max_idx = 0;
+        for (let j = 1; j <= n; j++) {
+            if (!super.isLesser(arr, j, max_idx)) {
+                max_idx = j;
+            }
+        }
+        return max_idx;
+    }
+
+    /**
+     * @private
+     * @param {Array<number>} arr 
+     * @param {number} n 
+     */
+    _flip(arr, m, n) {
+        for (let i = m, j = n; i < j; i++, j--) {
+            super.swap(arr, i, j);
+        }
+    }
+
+    /**
+     * 
+     * @param {Array<number>} arr 
+     */
+    process(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
+            // find the index of the largest element not yet sorted
+            let max_idx = this._findMaxIdx(arr, i);
+
+            if (max_idx < i) {
+                // flip arr max element to index 0
+                // if (max_idx > 0) {
+                //     this._flip(arr, max_idx);
+                // }
+
+                // then flip the max element to its place
+                this._flip(arr, max_idx, i);
+            }
+        }
+    }
 }
