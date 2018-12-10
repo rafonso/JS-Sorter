@@ -83,7 +83,9 @@ class ComponentsController {
     }
 
     gerarValores() {
-        this.valores = this.geradorSequencia.gerar(parseInt(this.selQuantidade.val()), this.selSequencia.val());
+        let quantidade = parseInt(this.selQuantidade.val());
+        let tipoSequencia = this.selSequencia.val();
+        this.valores = this.geradorSequencia.gerar(quantidade, tipoSequencia);
         this.cores = [];
         this.valores.forEach((i) => this.cores[i] = toRgb(i, i => i / this.valores.length));
         this.dadosForamOrdenados = false;
@@ -110,7 +112,7 @@ class ComponentsController {
             listeners.push(new Sounder(this.valores.length));
         }
 
-        this.worker = new Worker('js/testeWorker.js');
+        this.worker = new Worker('js/worker.js');
         this.worker.addEventListener("message", (e) => listeners.forEach(l => l.notify(e.data)));
         this.worker.postMessage({
             "valores": this.valores,

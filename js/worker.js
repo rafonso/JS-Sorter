@@ -15,7 +15,7 @@ function startSorter(e) {
  */
 if ('function' === typeof importScripts) {
 	importScripts(
-		"/js/element.js",
+		"/js/commons.js",
 		"/js/sorter.js");
 
 	addEventListener('message', startSorter);

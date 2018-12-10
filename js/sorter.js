@@ -998,3 +998,110 @@ class PancakeSorter extends Sorter {
         }
     }
 }
+
+/**
+ * https://en.wikipedia.org/wiki/Pancake_sorting
+ * https://rosettacode.org/wiki/Sorting_algorithms/Pancake_sort#JavaScript
+ */
+class IntroSorter extends Sorter {
+
+    /**
+     * 
+     * @param {number} pauseTime tempo de pausa entre cada evento.
+     */
+    constructor(pauseTime) {
+        super(pauseTime);
+    }
+
+    /**
+     * 
+     * @param {Array<number>} arr 
+     */
+    process(arr) {
+        let maxdepth = Math.floor((Math.log2(arr.length)) / 2);
+        this._introsort(arr, 0, arr.length, maxdepth);
+    }
+
+    /**
+     * 
+     * @param {Array<number>} arr 
+     * @param {number} begin 
+     * @param {number} end 
+     * @param {number} depth 
+     */
+    _introsort(arr, begin, end, depth) {
+        let size = end - begin;
+        if (size === 1) {
+            return;
+        }
+        if (depth === 0) {
+            this._quickSort(arr, begin, end);
+        }
+
+        let pivot = this._medianof3(arr, begin, Math.floor((begin + end) / 2), end);
+
+    }
+
+    _medianof3(arr, begin, mid, end) {
+        let pos = -1;
+
+        if (arr[mid] < arr[begin]) {
+            if (arr[end] < arr[mid]) {
+                pos = mid;
+            } else {
+                pos = (arr[end] < arr[begin])? end: begin;
+            }
+        } else {
+            if (arr[end] < arr[mid]) {
+                pos = (arr[end] < arr[begin])? begin: end;
+            } else {
+                pos = mid;
+            }
+        }
+
+        return arr[pos];
+    }
+
+
+    /**
+     * 
+     * @param {Array<number>} arr 
+     * @param {number} left 
+     * @param {number} right 
+     */
+    _quickSort(arr, left, right) {
+        if (left < right) {
+            let pivot = right;
+            let partitionIndex = this._partition(arr, pivot, left, right);
+
+            //sort left and right
+            this._quickSort(arr, left, partitionIndex - 1);
+            this._quickSort(arr, partitionIndex + 1, right);
+        }
+
+        return arr;
+    }
+
+    /**
+     * 
+     * @param {Array<number>} arr 
+     * @param {number} pivot 
+     * @param {number} left 
+     * @param {number} right 
+     */
+    _partition(arr, pivot, left, right) {
+        let pivotValue = arr[pivot],
+            partitionIndex = left;
+
+        for (let i = left; i < right; i++) {
+            if (super.isLesserThanValue(arr, i, pivotValue)) {
+                super.swap(arr, i, partitionIndex);
+                partitionIndex++;
+            }
+        }
+        super.swap(arr, right, partitionIndex);
+
+        return partitionIndex;
+    }
+
+}
